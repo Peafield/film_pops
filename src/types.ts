@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const TMDBMovieSchema = z.object({
+	id: z.number(),
 	title: z.string(),
 	overview: z.string(),
 	popularity: z.number(),

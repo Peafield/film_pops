@@ -25,10 +25,10 @@ export async function getUpComingUKMovies() {
 		page: "1",
 		region: "GB",
 		primary_release_year: year.toString(),
-		sort_by: "primary_release_date.asc",
+		sort_by: "popularity.desc",
 		"primary_release_date.gte": todayFormatted,
 		"primary_release_date.lte": sixMonthsFormatted,
-		with_release_type: "2|3",
+		watch_region: "GB",
 	});
 
 	const fullUrl = `${BASE_URL}?${params}`;
