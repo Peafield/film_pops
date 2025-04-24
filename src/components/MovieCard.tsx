@@ -8,10 +8,6 @@ type MovieCardProps = {
 	movie: TMDBMovie;
 };
 
-const getPlaceholderUrl = (width = 500, height = 750) => {
-	return `https://placehold.co/${width}x${height}/374151/FFFFFF?text=No+Image`;
-};
-
 export function MovieCard({ movie }: MovieCardProps) {
 	const [isFlipped, setIsFlipped] = useState(false);
 
