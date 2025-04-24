@@ -15,7 +15,7 @@ export function MovieCard({ movie }: MovieCardProps) {
 
 	return (
 		<div
-			className="w-full aspect-[2/3] perspective-distant cursor-pointer group"
+			className="w-full aspect-[2/3] perspective-distant cursor-pointer group "
 			onClick={() => setIsFlipped((prev) => !prev)}
 			onKeyUp={(e) => {
 				if (e.key === "Enter" || e.key === " ") setIsFlipped((prev) => !prev);
@@ -26,7 +26,7 @@ export function MovieCard({ movie }: MovieCardProps) {
 			<motion.div
 				animate={{ rotateY: isFlipped ? 180 : 0 }}
 				transition={{ duration: 0.6, ease: "easeInOut" }}
-				className="relative w-full h-full transform-3d rounded-lg shadow-lg"
+				className="relative w-full h-full transform-3d rounded-lg shadow-lg hover:ring-2 hover:ring-amber-600 hover:ring-offset-2 hover:ring-offset-black"
 			>
 				{/* --- Front Side --- */}
 				<motion.div className="absolute inset-0 backface-hidden overflow-hidden rounded-lg">
