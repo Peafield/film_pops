@@ -62,7 +62,6 @@ export async function getAllUpComingUKMovies() {
 	}
 
 	const today = new Date();
-	const year = today.getFullYear();
 	const twoWeeksAgoStartDate = new Date(today);
 	twoWeeksAgoStartDate.setDate(today.getDate() - 14);
 	const sixMonthsFromNow = new Date(today);
