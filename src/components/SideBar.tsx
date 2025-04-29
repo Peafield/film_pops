@@ -4,10 +4,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { AiOutlineRollback } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
-import { FaRankingStar } from "react-icons/fa6";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdOutlineUpcoming } from "react-icons/md";
-import { PiFilmStrip } from "react-icons/pi";
+import { PiFilmStrip, PiRanking } from "react-icons/pi";
 import { useClickAway } from "react-use";
 
 export const Sidebar = () => {
@@ -82,7 +81,7 @@ export const Sidebar = () => {
 
 const items = [
 	{ title: "Upcoming Films", Icon: MdOutlineUpcoming, href: "#" },
-	{ title: "Pops' Picks", Icon: FaRankingStar },
+	{ title: "Pops' Picks", Icon: PiRanking },
 	{ title: "Sign Out", Icon: BiLogOut, href: "#" },
 ];
 
