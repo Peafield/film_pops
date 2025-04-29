@@ -6,8 +6,9 @@ import { AiOutlineRollback } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdOutlineUpcoming } from "react-icons/md";
-import { PiFilmStrip, PiRanking } from "react-icons/pi";
+import { PiRanking } from "react-icons/pi";
 import { useClickAway } from "react-use";
+import { FilmPopsLogo } from "./FilmPopsLogo";
 
 export const Sidebar = () => {
 	const [open, setOpen] = useState(false);
@@ -40,9 +41,7 @@ export const Sidebar = () => {
 							aria-label="Sidebar"
 						>
 							<div className="flex items-center justify-between p-5 border-b-2 border-zinc-800">
-								<span className="flex items-center justify-center gap-1">
-									<PiFilmStrip /> Film pops
-								</span>
+								<FilmPopsLogo />
 								<button
 									type="button"
 									onClick={toggleSidebar}

@@ -1,4 +1,35 @@
+import { ObjectId } from "mongodb";
 import { z } from "zod";
+
+export const UserSchema = z.object({
+	_id: z.instanceof(ObjectId).transform((id) => id.toString()),
+	username: z.string(),
+	hashedPassword: z.string(),
+	createdAt: z.date(),
+});
+
+export type UserProfile = z.infer<typeof UserSchema>;
+
+export const LoginFormSchema = z
+	.object({
+		username: z
+			.string()
+			.min(2, { message: "It seems your missing some letters..." }),
+		password: z.string().min(8, {
+			message:
+				"You must enter your original password or new one if you have updated it",
+		}),
+		confirmPassword: z.string().min(8),
+	})
+	.superRefine(({ confirmPassword, password }, ctx) => {
+		if (confirmPassword !== password) {
+			ctx.addIssue({
+				code: "custom",
+				message: "The passwords did not match",
+				path: ["confirmPassword"],
+			});
+		}
+	});
 
 export const TMDBMovieSchema = z.object({
 	id: z.number(),
