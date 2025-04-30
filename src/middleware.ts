@@ -1,10 +1,8 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
 	const sessionCookie = getSessionCookie(request);
-
-	console.log("Session Cookie Value:", sessionCookie);
 
 	if (!sessionCookie) {
 		return NextResponse.redirect(new URL("/login", request.url));
@@ -14,5 +12,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ["/"],
+	matcher: ["/((?!api|_next/static|_next/image|favicon.ico|login).*)"],
 };

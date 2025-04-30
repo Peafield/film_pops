@@ -1,7 +1,6 @@
 "use client";
 
 import { submitLoginForm } from "@/app/login/action";
-import { FilmPopsLogo } from "@/components/FilmPopsLogo";
 import DOMPurify from "isomorphic-dompurify";
 import { AnimatePresence, easeInOut, motion } from "motion/react";
 import { useActionState } from "react";
@@ -40,6 +39,7 @@ export function Login() {
 						className="w-full px-4 py-3 bg-gray-800 peer placeholder-transparent rounded-lg"
 						placeholder="Username"
 						aria-label="Enter your username"
+						autoComplete="off"
 					/>
 					<label
 						htmlFor="username"
@@ -73,6 +73,7 @@ export function Login() {
 						className="w-full px-4 py-3 bg-gray-800 peer placeholder-transparent rounded-lg"
 						placeholder="Password"
 						aria-label="Enter your password"
+						autoComplete="off"
 					/>
 					<label
 						htmlFor="password"
@@ -108,6 +109,7 @@ export function Login() {
 						className="w-full px-4 py-3 bg-gray-800 peer placeholder-transparent rounded-lg"
 						placeholder="confirmPassword"
 						aria-label="Confirm your password"
+						autoComplete="off"
 					/>
 					<label
 						htmlFor="confirmPassword"
