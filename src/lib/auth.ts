@@ -2,16 +2,25 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
 import { username } from "better-auth/plugins";
-import { MongoClient } from "mongodb";
+import { getDb } from "./mongodb";
 
-const defaultUri = "mongodb://127.0.0.1:27017";
-const uri = process.env.MONGODB_URI || defaultUri;
-const dbName = process.env.MONGODB_NAME || "filmPops";
+async function initializeAuth() {
+	try {
+		const db = await getDb();
+		return betterAuth({
+			database: mongodbAdapter(db),
+			emailAndPassword: {
+				enabled: true,
+			},
+			plugins: [username(), nextCookies()],
+		});
+	} catch (error) {
+		console.error(
+			"Failed to initialize auth due to DB connection error:",
+			error,
+		);
+		throw new Error("Auth initialization failed");
+	}
+}
 
-const client = new MongoClient(uri);
-const db = client.db(dbName);
-
-export const auth = betterAuth({
-	database: mongodbAdapter(db),
-	plugins: [username(), nextCookies()],
-});
+export const authPromise = initializeAuth();

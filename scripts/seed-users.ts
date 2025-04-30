@@ -5,7 +5,7 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 const defaultUri = "mongodb://127.0.0.1:27017";
 const uri = process.env.MONGODB_URI || defaultUri;
 const dbName = process.env.MONGODB_NAME || "filmPops";
-const collectionName = "users";
+const collectionName = "user";
 
 const saltRounds = 10;
 

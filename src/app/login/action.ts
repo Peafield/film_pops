@@ -1,6 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { authPromise } from "@/lib/auth";
+import { authClient } from "@/lib/auth-client";
 import { LoginFormSchema } from "@/types";
 
 export type LoginFormState = {
@@ -43,9 +44,16 @@ export async function submitLoginForm(
 	}
 
 	const { username, password } = validatedFields.data;
+	const auth = await authPromise;
 
 	try {
 		console.log(`Attempting sign in for user: ${username}`);
+		const data = await authClient.signUp.email({
+			email: "email@domain.com",
+			name: "Test User",
+			password: "password1234",
+			username: "test",
+		});
 		await auth.api.signInUsername({
 			body: {
 				username,
