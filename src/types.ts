@@ -1,23 +1,24 @@
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 
-export const UserSchema = z.object({
-	_id: z.instanceof(ObjectId).transform((id) => id.toString()),
+const BaseUserSchema = z.object({
 	username: z.string(),
 	hashedPassword: z.string(),
 	createdAt: z.date(),
 });
 
+export type UserDocument = z.infer<typeof BaseUserSchema>;
+
+export const UserSchema = BaseUserSchema.extend({
+	_id: z.instanceof(ObjectId).transform((id) => id.toString()),
+});
 export type UserProfile = z.infer<typeof UserSchema>;
 
 export const LoginFormSchema = z
 	.object({
-		username: z
-			.string()
-			.min(2, { message: "It seems your missing some letters..." }),
+		username: z.string().min(2, { message: "Please enter your username" }),
 		password: z.string().min(8, {
-			message:
-				"You must enter your original password or new one if you have updated it",
+			message: "Please enter your password",
 		}),
 		confirmPassword: z.string().min(8),
 	})

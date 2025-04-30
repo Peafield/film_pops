@@ -1,8 +1,7 @@
 "use server";
 
-import { signIn } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { LoginFormSchema } from "@/types";
-import AuthError from "next-auth";
 
 export type LoginFormState = {
 	errors?: {
@@ -47,22 +46,17 @@ export async function submitLoginForm(
 
 	try {
 		console.log(`Attempting sign in for user: ${username}`);
-		await signIn("credentials", {
-			username,
-			password,
-			redirect: false,
+		await auth.api.signInUsername({
+			body: {
+				username,
+				password,
+			},
+			asResponse: true,
 		});
 		console.log(`Sign in successful (or threw error) for user: ${username}`);
 		return { message: "Login successful (check if redirect happens)" };
 	} catch (error) {
 		console.error("Sign in error:", error);
-		if (error instanceof AuthError) {
-			return {
-				values: formValues,
-				message: "Invalid username or password.",
-				errors: { credentials: ["Invalid username or password."] },
-			};
-		}
 		return {
 			values: formValues,
 			message: "Something went wrong during login.",

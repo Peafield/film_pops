@@ -59,7 +59,7 @@ export const Sidebar = () => {
 											<a
 												onClick={toggleSidebar}
 												href={href}
-												className="flex items-center justify-between gap-5 p-5 transition-all border-b-2 hover:ring-2 hover:ring-amber-600 border-zinc-800"
+												className="flex items-center justify-between gap-5 p-5 transition-all border-b-2 hover:ring-2 hover:ring-amber-600 border-zinc-800 cursor-pointer"
 											>
 												<motion.span {...framerText(idx)}>{title}</motion.span>
 												<motion.div {...framerIcon}>
@@ -88,14 +88,14 @@ const framerSidebarBackground = {
 	initial: { opacity: 0 },
 	animate: { opacity: 1 },
 	exit: { opacity: 0, transition: { delay: 0.2 } },
-	transition: { duration: 0.3 },
+	transition: { duration: 0.2 },
 };
 
 const framerSidebarPanel = {
 	initial: { x: "-100%" },
 	animate: { x: 0 },
 	exit: { x: "-100%" },
-	transition: { duration: 0.3 },
+	transition: { duration: 0.1 },
 };
 
 const framerText = (delay: number) => {
@@ -103,7 +103,7 @@ const framerText = (delay: number) => {
 		initial: { opacity: 0, x: -50 },
 		animate: { opacity: 1, x: 0 },
 		transition: {
-			delay: 0.5 + delay / 10,
+			delay: 0.2 + delay / 5,
 		},
 	};
 };

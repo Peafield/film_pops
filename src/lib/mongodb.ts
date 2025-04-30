@@ -1,46 +1,84 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { type Db, MongoClient, ServerApiVersion } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
-const dbName = process.env.MONGODB_NAME;
+const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
+const dbName = process.env.MONGODB_DB_NAME || "filmPops";
 const options = {
 	serverApi: {
 		version: ServerApiVersion.v1,
 		strict: true,
 		deprecationErrors: true,
 	},
+	maxPoolSize: 10,
+	minPoolSize: 2,
+	connectTimeoutMS: 5000,
+	socketTimeoutMS: 30000,
 };
 
 if (!uri) {
-	throw new Error("Please define the MONGODB_URI environment variable");
+	throw new Error(
+		"Please define the MONGODB_URI environment variable inside .env.local",
+	);
 }
 
-let client: MongoClient | null = null;
-let clientPromise: Promise<MongoClient> | null = null;
+let cachedClient: MongoClient | null = null;
+let cachedDb: Db | null = null;
 
-if (process.env.NODE_ENV === "development") {
-	const globalWithMongo = global as typeof globalThis & {
-		_mongoClientPromise?: Promise<MongoClient>;
-	};
-
-	if (!globalWithMongo._mongoClientPromise) {
-		client = new MongoClient(uri, options);
-		globalWithMongo._mongoClientPromise = client.connect();
-		console.log("Creating new MongoDB connection (development)...");
+/**
+ * Establishes a connection to MongoDB if not already connected,
+ * caches the client and db instances, and returns them.
+ */
+async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+	if (cachedClient && cachedDb) {
+		try {
+			await cachedClient.db(dbName).command({ ping: 1 });
+		} catch (e) {
+			console.warn("Cached connection ping failed, reconnecting...", e);
+			cachedClient = null;
+			cachedDb = null;
+		}
+		if (cachedClient && cachedDb) {
+			return { client: cachedClient, db: cachedDb };
+		}
 	}
-	clientPromise = globalWithMongo._mongoClientPromise;
-} else {
-	client = new MongoClient(uri, options);
-	clientPromise = client.connect();
-	console.log("Creating new MongoDB connection (production)...");
+
+	const client = new MongoClient(uri, options);
+	cachedClient = client;
+
+	try {
+		console.log("Attempting to connect to MongoDB...");
+		await client.connect();
+		const db = client.db(dbName);
+
+		await db.command({ ping: 1 });
+		console.log(`Successfully connected to MongoDB database: ${dbName}`);
+
+		cachedDb = db;
+
+		return { client, db };
+	} catch (error) {
+		console.error("Failed to connect to the database:", error);
+		cachedClient = null;
+		cachedDb = null;
+		throw new Error("Failed to connect to the database.");
+	}
 }
 
-export default clientPromise;
+/**
+ * Gets the connected MongoDB database instance.
+ * Ensures connection is established before returning.
+ * @returns {Promise<Db>} The connected Db instance.
+ */
+export async function getDb(): Promise<Db> {
+	const { db } = await connectToDatabase();
+	return db;
+}
 
-export async function getDb() {
-	// Use your preferred DB name
-	if (!clientPromise) {
-		throw new Error("MongoDB client promise is not initialized");
-	}
-	const mongoClient = await clientPromise;
-	return mongoClient.db(dbName);
+/**
+ * Gets the connected MongoDB client instance.
+ * Ensures connection is established before returning.
+ * @returns {Promise<MongoClient>} The connected MongoClient instance.
+ */
+export async function getMongoClient(): Promise<MongoClient> {
+	const { client } = await connectToDatabase();
+	return client;
 }

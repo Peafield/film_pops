@@ -3,7 +3,7 @@
 import { submitLoginForm } from "@/app/login/action";
 import { FilmPopsLogo } from "@/components/FilmPopsLogo";
 import DOMPurify from "isomorphic-dompurify";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, easeInOut, motion } from "motion/react";
 import { useActionState } from "react";
 
 export function Login() {
@@ -26,13 +26,9 @@ export function Login() {
 	);
 	return (
 		<motion.div variants={containerVariants} initial="hidden" animate="visible">
-			<form
-				action={formAction}
-				className="max-w-2xl mx-auto space-y-6"
-				noValidate
-			>
+			<form action={formAction} className="w-3xs mx-auto space-y-6" noValidate>
 				<motion.div variants={itemVariants} className="text-start">
-					<FilmPopsLogo />
+					<h1 className="text-xl">Login</h1>
 				</motion.div>
 				<motion.div variants={itemVariants} className="relative">
 					<input
@@ -41,14 +37,14 @@ export function Login() {
 						name="username"
 						required
 						defaultValue={DOMPurify.sanitize(state?.values?.username || "")}
-						className="w-full px-4 py-3 bg-gray-800 peer placeholder-transparent"
+						className="w-full px-4 py-3 bg-gray-800 peer placeholder-transparent rounded-lg"
 						placeholder="Username"
 						aria-label="Enter your username"
 					/>
 					<label
 						htmlFor="username"
 						aria-label="username"
-						className="absolute left-4 -top-2.5 rounded-lg bg-gray-800  px-1 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-2.5 peer-focus:text-sm"
+						className="absolute left-4 -top-2.5 rounded-lg bg-gray-800 px-1 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-2.5 peer-focus:text-sm"
 					>
 						Username
 					</label>
@@ -74,7 +70,7 @@ export function Login() {
 						name="password"
 						required
 						defaultValue={DOMPurify.sanitize(state?.values?.password || "")}
-						className="w-full px-4 py-3 bg-gray-800 peer placeholder-transparent"
+						className="w-full px-4 py-3 bg-gray-800 peer placeholder-transparent rounded-lg"
 						placeholder="Password"
 						aria-label="Enter your password"
 					/>
@@ -92,7 +88,7 @@ export function Login() {
 								initial="initial"
 								animate="animate"
 								exit="exit"
-								className="mt-1 text-sm text-error overflow-hidden"
+								className="mt-1 text-sm text-error overflow-hidden cursor-pointer"
 								aria-live="polite"
 							>
 								{state.errors.password}
@@ -109,7 +105,7 @@ export function Login() {
 						defaultValue={DOMPurify.sanitize(
 							state?.values?.confirmPassword || "",
 						)}
-						className="w-full px-4 py-3 bg-gray-800 peer placeholder-transparent"
+						className="w-full px-4 py-3 bg-gray-800 peer placeholder-transparent rounded-lg"
 						placeholder="confirmPassword"
 						aria-label="Confirm your password"
 					/>
@@ -134,6 +130,19 @@ export function Login() {
 							</motion.p>
 						)}
 					</AnimatePresence>
+				</motion.div>
+				<motion.div variants={itemVariants} className="flex justify-end">
+					<motion.button
+						variants={buttonVariants}
+						initial="initial"
+						whileHover="hover"
+						whileTap="tap"
+						type="submit"
+						disabled={isPending}
+						className="font-openSans px-6 py-2 rounded-lg  bg-amber-800  disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+					>
+						{isPending ? "Loggin in..." : "Login"}
+					</motion.button>
 				</motion.div>
 			</form>
 		</motion.div>
@@ -178,4 +187,14 @@ const errorVariants = {
 		y: -10,
 		height: 0,
 	},
+};
+
+export const buttonVariants = {
+	initial: { scale: 1 },
+	hover: {
+		scale: 1.05,
+		backgroundColor: "#0d6e25",
+		transition: { stiffness: 400, damping: 10, easeInOut },
+	},
+	tap: { scale: 0.95 },
 };
