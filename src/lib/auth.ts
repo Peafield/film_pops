@@ -10,8 +10,31 @@ async function initializeAuth() {
 			database: mongodbAdapter(db),
 			emailAndPassword: {
 				enabled: true,
+				autoSignIn: false,
+			},
+			user: {
+				additionalFields: {
+					isApproved: {
+						type: "boolean",
+						defaultValue: false,
+						input: false,
+					},
+				},
 			},
 			plugins: [nextCookies()],
+			databaseHooks: {
+				user: {
+					create: {
+						before: async (userData) => {
+							const dataWithApproval = {
+								...userData,
+								isApproved: false,
+							};
+							return { data: dataWithApproval };
+						},
+					},
+				},
+			},
 		});
 	} catch (error) {
 		console.error(

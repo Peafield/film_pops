@@ -56,7 +56,6 @@ export async function submitSignUpForm(
 				email,
 				password,
 			},
-			asResponse: true,
 		});
 	} catch (error) {
 		console.error("Sign in error:", error);
@@ -66,5 +65,7 @@ export async function submitSignUpForm(
 			errors: { credentials: ["An unexpected error occurred."] },
 		};
 	}
-	redirect("/");
+	const params = new URLSearchParams();
+	params.set("username", name);
+	redirect(`/pending-approval?${params.toString()}`);
 }
