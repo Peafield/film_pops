@@ -1,35 +1,38 @@
 "use server";
 
 import { authPromise } from "@/lib/auth";
-import { authClient } from "@/lib/auth-client";
-import { LoginFormSchema } from "@/types";
+import { SignUpFormSchema } from "@/types";
+import { redirect } from "next/navigation";
 
-export type LoginFormState = {
+export type SignUpFormState = {
 	errors?: {
-		username?: string[];
+		name?: string[];
+		email?: string[];
 		password?: string[];
 		confirmPassword?: string[];
 		credentials?: string[];
 	};
 	values?: {
-		username?: string;
+		name?: string;
+		email?: string;
 		password?: string;
 		confirmPassword?: string;
 	};
 	message?: string | null;
 };
 
-export async function submitLoginForm(
-	_prevState: LoginFormState,
+export async function submitSignUpForm(
+	_prevState: SignUpFormState,
 	formData: FormData,
-): Promise<LoginFormState> {
+): Promise<SignUpFormState> {
 	const formValues = {
-		username: formData.get("username") as string,
+		name: formData.get("name") as string,
+		email: formData.get("email") as string,
 		password: formData.get("password") as string,
 		confirmPassword: formData.get("confirmPassword") as string,
 	};
 
-	const validatedFields = LoginFormSchema.safeParse(formValues);
+	const validatedFields = SignUpFormSchema.safeParse(formValues);
 
 	if (!validatedFields.success) {
 		console.log(
@@ -43,26 +46,18 @@ export async function submitLoginForm(
 		};
 	}
 
-	const { username, password } = validatedFields.data;
+	const { name, email, password } = validatedFields.data;
 	const auth = await authPromise;
 
 	try {
-		console.log(`Attempting sign in for user: ${username}`);
-		const data = await authClient.signUp.email({
-			email: "email@domain.com",
-			name: "Test User",
-			password: "password1234",
-			username: "test",
-		});
-		await auth.api.signInUsername({
+		await auth.api.signUpEmail({
 			body: {
-				username,
+				name,
+				email,
 				password,
 			},
 			asResponse: true,
 		});
-		console.log(`Sign in successful (or threw error) for user: ${username}`);
-		return { message: "Login successful (check if redirect happens)" };
 	} catch (error) {
 		console.error("Sign in error:", error);
 		return {
@@ -71,4 +66,5 @@ export async function submitLoginForm(
 			errors: { credentials: ["An unexpected error occurred."] },
 		};
 	}
+	redirect("/");
 }

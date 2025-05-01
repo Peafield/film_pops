@@ -1,7 +1,6 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
-import { username } from "better-auth/plugins";
 import { getDb } from "./mongodb";
 
 async function initializeAuth() {
@@ -12,7 +11,7 @@ async function initializeAuth() {
 			emailAndPassword: {
 				enabled: true,
 			},
-			plugins: [username(), nextCookies()],
+			plugins: [nextCookies()],
 		});
 	} catch (error) {
 		console.error(

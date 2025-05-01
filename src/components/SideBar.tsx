@@ -1,6 +1,8 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { AiOutlineRollback } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
@@ -11,16 +13,26 @@ import { useClickAway } from "react-use";
 import { FilmPopsLogo } from "./FilmPopsLogo";
 
 export const Sidebar = () => {
+	const router = useRouter();
 	const [open, setOpen] = useState(false);
 	const ref = useRef(null);
 	useClickAway(ref, () => setOpen(false));
-	const toggleSidebar = () => setOpen((prev) => !prev);
+	const handleToggleSidebar = () => setOpen((prev) => !prev);
+	const handleSignOut = async () => {
+		await authClient.signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					router.push("/login");
+				},
+			},
+		});
+	};
 
 	return (
 		<>
 			<button
 				type="button"
-				onClick={toggleSidebar}
+				onClick={handleToggleSidebar}
 				className="p-3 border-2 border-zinc-800 rounded-xl"
 				aria-label="toggle sidebar"
 			>
@@ -44,7 +56,7 @@ export const Sidebar = () => {
 								<FilmPopsLogo />
 								<button
 									type="button"
-									onClick={toggleSidebar}
+									onClick={handleToggleSidebar}
 									className="p-3 border-2 border-zinc-800 rounded-xl"
 									aria-label="close sidebar"
 								>
@@ -54,10 +66,14 @@ export const Sidebar = () => {
 							<ul>
 								{items.map((item, idx) => {
 									const { title, href, Icon } = item;
+									const clickHandler =
+										item.action === "signout"
+											? handleSignOut
+											: handleToggleSidebar;
 									return (
 										<li key={title}>
 											<a
-												onClick={toggleSidebar}
+												onClick={clickHandler}
 												href={href}
 												className="flex items-center justify-between gap-5 p-5 transition-all border-b-2 hover:ring-2 hover:ring-amber-600 border-zinc-800 cursor-pointer"
 											>
@@ -79,9 +95,19 @@ export const Sidebar = () => {
 };
 
 const items = [
-	{ title: "Upcoming Films", Icon: MdOutlineUpcoming, href: "#" },
-	{ title: "Pops' Picks", Icon: PiRanking },
-	{ title: "Sign Out", Icon: BiLogOut, href: "#" },
+	{
+		title: "Upcoming Films",
+		Icon: MdOutlineUpcoming,
+		href: "/",
+		action: "toggle",
+	},
+	{
+		title: "Pops' Picks",
+		Icon: PiRanking,
+		href: "/popspicks",
+		action: "toggle",
+	},
+	{ title: "Sign Out", Icon: BiLogOut, action: "signout" },
 ];
 
 const framerSidebarBackground = {

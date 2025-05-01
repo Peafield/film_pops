@@ -2,8 +2,8 @@ import { ObjectId } from "mongodb";
 import { z } from "zod";
 
 const BaseUserSchema = z.object({
-	username: z.string(),
-	hashedPassword: z.string(),
+	name: z.string(),
+	email: z.string().email(),
 	createdAt: z.date(),
 });
 
@@ -14,9 +14,10 @@ export const UserSchema = BaseUserSchema.extend({
 });
 export type UserProfile = z.infer<typeof UserSchema>;
 
-export const LoginFormSchema = z
+export const SignUpFormSchema = z
 	.object({
-		username: z.string().min(2, { message: "Please enter your username" }),
+		name: z.string().min(2, { message: "Please enter your name" }),
+		email: z.string().email(),
 		password: z.string().min(8, {
 			message: "Please enter your password",
 		}),
@@ -31,6 +32,14 @@ export const LoginFormSchema = z
 			});
 		}
 	});
+
+export const SignInFormSchema = z.object({
+	email: z.string().email(),
+	password: z.string().min(8, {
+		message: "Please enter your password",
+	}),
+	rememberMe: z.boolean().optional(),
+});
 
 export const TMDBMovieSchema = z.object({
 	id: z.number(),

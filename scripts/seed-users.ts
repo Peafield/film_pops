@@ -1,71 +1,62 @@
-import type { UserDocument } from "@/types";
-import bcrypt from "bcrypt";
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { authPromise } from "@/lib/auth";
+import { closeDb, getDb } from "@/lib/mongodb";
+import type { Db } from "mongodb";
 
-const defaultUri = "mongodb://127.0.0.1:27017";
-const uri = process.env.MONGODB_URI || defaultUri;
-const dbName = process.env.MONGODB_NAME || "filmPops";
-const collectionName = "user";
+const passwordPrefix = process.env.INITIAL_PASSWORD_PREFIX || "password";
 
-const saltRounds = 10;
-
-const initialUsers = [
-	{ username: "Peter", password: "initialPassword1" },
-	{ username: "Andrew", password: "initialPassword2" },
-	{ username: "Fede", password: "initialPassword3" },
+const usersToSeed = [
+	{
+		password: "",
+		email: "peter@mail.com",
+		name: "peter",
+	},
+	{
+		password: "",
+		email: "anna@mail.com",
+		name: "peter",
+	},
 ];
 
 async function seedUsers() {
-	console.log(`Connecting to MongoDB at ${uri}...`);
-
-	const client = new MongoClient(uri, {
-		serverApi: {
-			version: ServerApiVersion.v1,
-			strict: true,
-			deprecationErrors: true,
-		},
-	});
-
+	let db: Db | null = null;
 	try {
-		await client.connect();
-		console.log("Connected successfully to MongoDB server");
-		const db = client.db(dbName);
-		const usersCollection = db.collection<UserDocument>(collectionName);
+		console.log("Conntecting to db...");
+		db = await getDb();
+		console.log(db);
+		console.log("Connected to db.");
 
-		console.log(`Sedding users into ${dbName}.${collectionName}`);
+		console.log("Initialising auth instance...");
+		const auth = await authPromise;
+		console.log("Auth instance initialised.");
 
-		for (const user of initialUsers) {
-			const existingUser = await usersCollection.findOne({
-				username: user.username,
-			});
+		for (const userData of usersToSeed) {
+			try {
+				userData.password = `${passwordPrefix}${userData.name}`;
+				userData.email = `${userData.name}@filmpops.com`;
 
-			if (existingUser) {
-				console.log(`User "${user}" already exists. Skipping`);
-				continue;
+				await auth.api.signUpEmail({
+					body: {
+						name: userData.name,
+						email: userData.email,
+						password: userData.password,
+					},
+				});
+
+				console.log(`Successfully created user ${userData.name}`);
+			} catch (error) {
+				throw new Error(`Failed to seed user: ${error}`);
 			}
-
-			console.log(`Hasing password for "${user.username}"...`);
-			const hashedPassword = await bcrypt.hash(user.password, saltRounds);
-
-			const newUserDocument: UserDocument = {
-				username: user.username,
-				hashedPassword: hashedPassword,
-				createdAt: new Date(),
-			};
-
-			const result = await usersCollection.insertOne(newUserDocument);
-			console.log(
-				`Inserted user "${user.username}" with ID: ${result.insertedId}`,
-			);
 		}
-
-		console.log("User seeding completed successfully");
+		console.log("User seeding process finished!");
 	} catch (error) {
-		console.error("Error during user seeding:", error);
+		console.error("An error occurred during the seeding process:", error);
 	} finally {
-		await client.close();
-		console.log("MongoDB connection closed");
+		if (db) {
+			await closeDb();
+			console.log("Db connection closed.");
+		}
 	}
 }
-
-seedUsers().catch(console.error);
+seedUsers()
+	.catch(console.error)
+	.finally(() => process.exit());

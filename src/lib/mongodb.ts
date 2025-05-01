@@ -82,3 +82,19 @@ export async function getMongoClient(): Promise<MongoClient> {
 	const { client } = await connectToDatabase();
 	return client;
 }
+
+/**
+ * Closes the MongoDB client connection if it exists.
+ * Resets the cached client and database instances.
+ * @returns {Promise<void>} Resolves when the connection is closed.
+ */
+export async function closeDb(): Promise<void> {
+	if (cachedClient) {
+		await cachedClient.close();
+		console.log("MongoDB connection closed.");
+		cachedClient = null;
+		cachedDb = null;
+	} else {
+		console.log("No MongoDB connection to close.");
+	}
+}
