@@ -16,7 +16,11 @@ export type UserProfile = z.infer<typeof UserSchema>;
 
 export const SignUpFormSchema = z
 	.object({
-		name: z.string().min(2, { message: "Please enter your name" }),
+		name: z
+			.string()
+			.trim()
+			.min(2, { message: "Please enter your name" })
+			.transform((val) => val.charAt(0).toUpperCase() + val.slice(1)),
 		email: z.string().email(),
 		password: z.string().min(8, {
 			message: "Please enter your password",
