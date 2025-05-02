@@ -1,6 +1,6 @@
 "use client";
 
-import { submitSignUpForm } from "@/app/signup/action";
+import { submitSignUpForm } from "@/app/_signup/action";
 import {
 	containerVariants,
 	errorVariants,

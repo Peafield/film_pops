@@ -1,6 +1,6 @@
 "use server";
 
-import { authPromise } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { SignUpFormSchema } from "@/types";
 import { redirect } from "next/navigation";
 
@@ -47,7 +47,6 @@ export async function submitSignUpForm(
 	}
 
 	const { name, email, password } = validatedFields.data;
-	const auth = await authPromise;
 
 	try {
 		await auth.api.signUpEmail({

@@ -153,7 +153,8 @@ export function SignIn() {
 					</motion.button>
 				</motion.div>
 			</form>
-			<motion.div
+			{/* Disabled for now as not necessary */}
+			{/* <motion.div
 				variants={itemVariants}
 				className="flex items-center justify-center gap-1"
 			>
@@ -164,7 +165,7 @@ export function SignIn() {
 				>
 					Sign up
 				</Link>
-			</motion.div>
+			</motion.div> */}
 		</motion.div>
 	);
 }

@@ -1,14 +1,16 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
+import { InferUserFromClient } from "better-auth";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { AiOutlineRollback } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { MdOutlineUpcoming } from "react-icons/md";
+import { MdOutlineAdminPanelSettings, MdOutlineUpcoming } from "react-icons/md";
 import { PiRanking } from "react-icons/pi";
+import { RiUserSettingsLine } from "react-icons/ri";
 import { useClickAway } from "react-use";
 import { FilmPopsLogo } from "./FilmPopsLogo";
 
@@ -16,6 +18,8 @@ export const Sidebar = () => {
 	const router = useRouter();
 	const [open, setOpen] = useState(false);
 	const ref = useRef(null);
+	const { data: session } = authClient.useSession();
+	const userData = session?.user;
 	useClickAway(ref, () => setOpen(false));
 	const handleToggleSidebar = () => setOpen((prev) => !prev);
 	const handleSignOut = async () => {
@@ -53,7 +57,7 @@ export const Sidebar = () => {
 							aria-label="Sidebar"
 						>
 							<div className="flex items-center justify-between p-5 border-b-2 border-zinc-800">
-								<FilmPopsLogo />
+								<FilmPopsLogo title={userData?.name} />
 								<button
 									type="button"
 									onClick={handleToggleSidebar}
@@ -70,6 +74,9 @@ export const Sidebar = () => {
 										item.action === "signout"
 											? handleSignOut
 											: handleToggleSidebar;
+									if (title === "Admin" && userData?.role !== "admin") {
+										return null;
+									}
 									return (
 										<li key={title}>
 											<a
@@ -96,6 +103,12 @@ export const Sidebar = () => {
 
 const items = [
 	{
+		title: "Admin",
+		Icon: MdOutlineAdminPanelSettings,
+		href: "/admin",
+		action: "toggle",
+	},
+	{
 		title: "Upcoming Films",
 		Icon: MdOutlineUpcoming,
 		href: "/",
@@ -105,6 +118,12 @@ const items = [
 		title: "Pops' Picks",
 		Icon: PiRanking,
 		href: "/popspicks",
+		action: "toggle",
+	},
+	{
+		title: "Settings",
+		Icon: RiUserSettingsLine,
+		href: "/settings",
 		action: "toggle",
 	},
 	{ title: "Sign Out", Icon: BiLogOut, action: "signout" },
