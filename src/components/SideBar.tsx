@@ -3,7 +3,7 @@
 import { authClient } from "@/lib/auth-client";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AiOutlineRollback } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -14,6 +14,8 @@ import { FilmPopsLogo } from "./FilmPopsLogo";
 
 export const Sidebar = () => {
 	const router = useRouter();
+	const { data } = authClient.useSession();
+	console.log(data?.user.isApproved);
 	const [open, setOpen] = useState(false);
 	const ref = useRef(null);
 	useClickAway(ref, () => setOpen(false));

@@ -1,6 +1,6 @@
 "use server";
 
-import { authPromise } from "@/lib/auth";
+import { authInit as auth } from "@/lib/auth";
 import { SignUpFormSchema } from "@/types";
 import { redirect } from "next/navigation";
 
@@ -47,7 +47,6 @@ export async function submitSignUpForm(
 	}
 
 	const { name, email, password } = validatedFields.data;
-	const auth = await authPromise;
 
 	try {
 		await auth.api.signUpEmail({
@@ -65,6 +64,7 @@ export async function submitSignUpForm(
 			errors: { credentials: ["An unexpected error occurred."] },
 		};
 	}
+
 	const params = new URLSearchParams();
 	params.set("username", name);
 	redirect(`/pending-approval?${params.toString()}`);

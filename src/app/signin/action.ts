@@ -1,6 +1,6 @@
 "use server";
 
-import { authPromise } from "@/lib/auth";
+import { authInit as auth } from "@/lib/auth";
 import { SignInFormSchema } from "@/types";
 import { redirect } from "next/navigation";
 
@@ -44,10 +44,11 @@ export async function submitSignInForm(
 	}
 
 	const { email, password, rememberMe } = validatedFields.data;
-	const auth = await authPromise;
+
+	// TODO: need to check whether user isApproved before signing in!!
 
 	try {
-		await auth.api.signInEmail({
+		const response = await auth.api.signInEmail({
 			body: {
 				email,
 				password,
@@ -55,6 +56,7 @@ export async function submitSignInForm(
 			},
 			asResponse: true,
 		});
+		console.log("sign in response:", response);
 	} catch (error) {
 		console.error("Sign in error:", error);
 		return {

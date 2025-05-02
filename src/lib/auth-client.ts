@@ -1,6 +1,7 @@
-import { createAuthClient } from "better-auth/client";
-import { usernameClient } from "better-auth/client/plugins";
+import { adminClient, customSessionClient } from "better-auth/client/plugins";
+import { createAuthClient } from "better-auth/react";
+import type { authInit } from "./auth";
 
 export const authClient = createAuthClient({
-	plugins: [usernameClient()],
+	plugins: [adminClient(), customSessionClient<typeof authInit>()],
 });
