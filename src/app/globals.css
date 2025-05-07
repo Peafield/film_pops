@@ -35,5 +35,5 @@ body {
 }
 
 .react-tabs__tab--selected {
-  @apply bg-blue-600;
+  @apply bg-indigo-600;
 }

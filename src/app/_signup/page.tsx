@@ -1,4 +1,4 @@
-import { SignUp } from "@/components/SignUpForm";
+import { SignUp } from "@/components/forms/SignUpForm";
 
 // TODO: Signup disabled until necessary.
 export default function SignUpPage() {
