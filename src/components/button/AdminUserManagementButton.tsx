@@ -1,17 +1,23 @@
+import { useAdminCreateUser } from "@/hooks/admin/useAdminCreateUser";
 import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 
 type AdminUserManagementButtonProps = {
 	title: string;
-	icon: React.ReactNode;
+	type: "submit" | "button";
+	icon?: React.ReactNode;
 	onClick?: () => void;
+	isModal?: boolean;
+	form?: string;
 };
 
-// TODO: find a better fix for rending icon and title!
 export function AdminUserManagementButton({
 	title,
 	icon,
 	onClick,
+	isModal = false,
+	type,
+	form,
 }: AdminUserManagementButtonProps) {
 	const [isMounted, setIsMounted] = useState(false);
 
@@ -20,12 +26,13 @@ export function AdminUserManagementButton({
 	});
 	return (
 		<button
-			type="button"
+			form={form}
+			type={type}
 			onClick={onClick}
-			className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center"
+			className="bg-indigo-500 hover:bg-indigo-900 text-white px-4 py-2 rounded-lg flex items-center cursor-pointer"
 		>
-			<span className="md:mr-2">{icon}</span>
-			{isMounted ? (isMobile ? null : title) : null}
+			{icon && <span className="md:mr-2">{icon}</span>}
+			{isMounted ? (isMobile && !isModal ? null : title) : null}
 		</button>
 	);
 }

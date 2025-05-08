@@ -3,12 +3,15 @@
 import { authClient } from "@/lib/auth-client";
 import type { UserWithRole } from "better-auth/plugins";
 import { useCallback, useEffect, useState } from "react";
-import { FaPlus } from "react-icons/fa";
+import { createPortal } from "react-dom";
+import { FaPlus, FaUserCog } from "react-icons/fa";
+import { FaRotate } from "react-icons/fa6";
 import { LiaUsersCogSolid } from "react-icons/lia";
-import { MdRefresh } from "react-icons/md";
 import { PiFilmStrip } from "react-icons/pi";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import { Modal } from "../Modal";
 import { AdminUserManagementButton } from "../button/AdminUserManagementButton";
+import { CreateUserAdminForm } from "../forms/CreateUserAdminForm";
 import { AdminDashboardPanel } from "./AdminDashboardPanel";
 import { AdminDashBoardPanelTitle } from "./AdminDashboardPanelTitle";
 import { AdminUsersTable } from "./AdminUsersTable";
@@ -19,6 +22,7 @@ export function Admin() {
 	>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
+	const [showModal, setShowModal] = useState(false);
 
 	const refetchAllUsers = useCallback(async () => {
 		setIsLoading(true);
@@ -46,71 +50,76 @@ export function Admin() {
 		refetchAllUsers();
 	}, [refetchAllUsers]);
 
-	// const refetchAllUsers = async () => {
-	// 	setIsLoading(true);
-	// 	try {
-	// 		const response = await authClient.admin.listUsers({
-	// 			query: {
-	// 				limit: 10,
-	// 			},
-	// 		});
-	// 		setUserData(response.data?.users);
-	// 		setIsLoading(false);
-	// 	} catch (err) {
-	// 		console.error("refetchAllusers error:", err);
-	// 		throw err;
-	// 	}
-	// };
-
 	return (
-		<section className="container mx-auto p-4">
-			<Tabs className="md:flex">
-				<TabList className="flex-column space-y space-y-4 text-sm font-medium text-gray-400 md:me-4 mb-4 md:mb-0">
-					<Tab className="inline-flex items-center px-4 py-3 rounded-lg w-full cursor-pointer text-white ">
-						<LiaUsersCogSolid className="size-4 me-2 text-white" />
-						Users
-					</Tab>
-					<Tab className="inline-flex items-center px-4 py-3 rounded-lg w-full cursor-pointer text-white">
-						<PiFilmStrip className="size-4 me-2 text-white" />
-						Films
-					</Tab>
-				</TabList>
+		<>
+			{showModal &&
+				createPortal(
+					<Modal
+						title={"Add User"}
+						icon={<FaUserCog />}
+						buttonTitle="Add user "
+						onClose={() => setShowModal(false)}
+						formId="admin-create-user-form"
+					>
+						<CreateUserAdminForm formId="admin-create-user-form" />
+					</Modal>,
+					document.body,
+				)}
+			<section className="container mx-auto p-4">
+				<Tabs className="md:flex">
+					<TabList className="flex-column space-y space-y-4 text-sm font-medium text-gray-400 md:me-4 mb-4 md:mb-0">
+						<Tab className="inline-flex items-center px-4 py-3 rounded-lg w-full cursor-pointer text-white ">
+							<LiaUsersCogSolid className="size-4 me-2 text-white" />
+							Users
+						</Tab>
+						<Tab className="inline-flex items-center px-4 py-3 rounded-lg w-full cursor-pointer text-white">
+							<PiFilmStrip className="size-4 me-2 text-white" />
+							Films
+						</Tab>
+					</TabList>
 
-				<TabPanel className={"w-full"}>
-					<AdminDashboardPanel>
-						<div className="flex justify-between items-center mb-6">
-							<AdminDashBoardPanelTitle title="User Management" />
-							<AdminUserManagementButton
-								title="Refresh"
-								icon={<MdRefresh />}
-								onClick={refetchAllUsers}
-							/>
-							<AdminUserManagementButton title="Add user" icon={<FaPlus />} />
-						</div>
-						{isLoading && <div>Loading users...</div>}
-						{error && (
-							<div className="text-red-500">Error: {error.message}</div>
-						)}
-						{!isLoading && !error && <AdminUsersTable users={usersData} />}
-					</AdminDashboardPanel>
-				</TabPanel>
-				<TabPanel>
-					<section className="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full">
-						<h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-							Films Tab
-						</h3>
-						<p className="mb-2">
-							This is some placeholder content the Profile tab's associated
-							content, clicking another tab will toggle the visibility of this
-							one for the next.
-						</p>
-						<p>
-							The tab JavaScript swaps classes to control the content visibility
-							and styling.
-						</p>
-					</section>
-				</TabPanel>
-			</Tabs>
-		</section>
+					<TabPanel className={"w-full"}>
+						<AdminDashboardPanel>
+							<div className="flex justify-between items-center mb-6">
+								<AdminDashBoardPanelTitle title="User Management" />
+								<AdminUserManagementButton
+									title="Refresh"
+									icon={<FaRotate />}
+									onClick={refetchAllUsers}
+									type="button"
+								/>
+								<AdminUserManagementButton
+									title="Add user"
+									icon={<FaPlus />}
+									onClick={() => setShowModal(true)}
+									type="button"
+								/>
+							</div>
+							{isLoading && <div>Loading users...</div>}
+							{error && (
+								<div className="text-red-500">Error: {error.message}</div>
+							)}
+							{!isLoading && !error && <AdminUsersTable users={usersData} />}
+						</AdminDashboardPanel>
+					</TabPanel>
+					<TabPanel>
+						<section className="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full">
+							<h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+								Films Tab
+							</h3>
+							<p className="mb-2">
+								This is some placeholder content the Profile tab's associated
+								content, clicking another tab will toggle the visibility of this
+								one for the next.
+							</p>
+							<p>
+								The tab JavaScript swaps classes to control the content
+								visibility and styling.
+							</p>
+						</section>
+					</TabPanel>
+				</Tabs>
+			</section>
+		</>
 	);
 }
