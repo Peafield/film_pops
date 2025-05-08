@@ -1,12 +1,20 @@
 import type { CreateUserForm } from "@/client-types";
 import { useAdminCreateUser } from "@/hooks/admin/useAdminCreateUser";
 import { type FormEvent, useState } from "react";
+import toast from "react-hot-toast";
 import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
+import { CustomToast } from "../CustomToast";
 
 type CreateUserAdminFormProps = {
 	formId: string;
+	onClose: () => void;
+	refetchAllUsers: () => void;
 };
-export function CreateUserAdminForm({ formId }: CreateUserAdminFormProps) {
+export function CreateUserAdminForm({
+	formId,
+	onClose,
+	refetchAllUsers,
+}: CreateUserAdminFormProps) {
 	const {
 		createUser,
 		error: apiError,
@@ -22,7 +30,21 @@ export function CreateUserAdminForm({ formId }: CreateUserAdminFormProps) {
 		event.preventDefault();
 		try {
 			await createUser(userData);
+			toast.custom(
+				<CustomToast
+					variant="success"
+					message={`User ${userData.email} created sucessfully!`}
+				/>,
+			);
+			refetchAllUsers();
+			onClose();
 		} catch (e) {
+			toast.custom(
+				<CustomToast
+					variant="error"
+					message={`Something's gone wrong: ${apiError}`}
+				/>,
+			);
 			console.error(e);
 		}
 	};
@@ -44,7 +66,7 @@ export function CreateUserAdminForm({ formId }: CreateUserAdminFormProps) {
 						onChange={(e) => setUserData({ ...userData, name: e.target.value })}
 						required
 						placeholder="Poppa Film"
-						className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors"
+						className="w-full pl-10 pr-3 py-2 text-gray-400 bg-gray-700 border border-gray-600 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors"
 					/>
 				</div>
 			</div>
@@ -65,7 +87,7 @@ export function CreateUserAdminForm({ formId }: CreateUserAdminFormProps) {
 						}
 						required
 						placeholder="poppafilm@filmpops.com"
-						className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors"
+						className="w-full pl-10 pr-3 py-2 text-gray-400 bg-gray-700 border border-gray-600 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors"
 					/>
 				</div>
 			</div>
@@ -86,14 +108,10 @@ export function CreateUserAdminForm({ formId }: CreateUserAdminFormProps) {
 						}
 						required
 						placeholder="password123"
-						className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors"
+						className="w-full pl-10 pr-3 py-2 text-gray-400 bg-gray-700 border border-gray-600 rounded-lg focus:border-indigo-500 focus:outline-none transition-colors"
 					/>
 				</div>
 			</div>
-			{apiError && <p className="text-red-500">{apiError}</p>}
-			{successData && (
-				<p className="text-green-500">User created successfully!</p>
-			)}
 		</form>
 	);
 }

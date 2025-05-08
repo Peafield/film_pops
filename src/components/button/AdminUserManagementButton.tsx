@@ -1,4 +1,3 @@
-import { useAdminCreateUser } from "@/hooks/admin/useAdminCreateUser";
 import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 
@@ -6,7 +5,7 @@ type AdminUserManagementButtonProps = {
 	title: string;
 	type: "submit" | "button";
 	icon?: React.ReactNode;
-	onClick?: () => void;
+	onClick?: () => void | Promise<void>;
 	isModal?: boolean;
 	form?: string;
 };
@@ -24,6 +23,11 @@ export function AdminUserManagementButton({
 	useEffect(() => {
 		setIsMounted(true);
 	});
+
+	const handleClick = async () => {
+		if (onClick) await onClick();
+	};
+
 	return (
 		<button
 			form={form}

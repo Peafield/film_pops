@@ -22,7 +22,7 @@ export function Admin() {
 	>();
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
-	const [showModal, setShowModal] = useState(false);
+	const [showAddUserModal, setShowAddUserModal] = useState(false);
 
 	const refetchAllUsers = useCallback(async () => {
 		setIsLoading(true);
@@ -50,18 +50,27 @@ export function Admin() {
 		refetchAllUsers();
 	}, [refetchAllUsers]);
 
+	const closeAddUserModal = () => {
+		setShowAddUserModal(false);
+	};
+
 	return (
 		<>
-			{showModal &&
+			{showAddUserModal &&
 				createPortal(
 					<Modal
 						title={"Add User"}
 						icon={<FaUserCog />}
-						buttonTitle="Add user "
-						onClose={() => setShowModal(false)}
+						buttonTitle="Add user"
+						isOpen={showAddUserModal}
+						onClose={closeAddUserModal}
 						formId="admin-create-user-form"
 					>
-						<CreateUserAdminForm formId="admin-create-user-form" />
+						<CreateUserAdminForm
+							formId="admin-create-user-form"
+							onClose={closeAddUserModal}
+							refetchAllUsers={refetchAllUsers}
+						/>
 					</Modal>,
 					document.body,
 				)}
@@ -91,7 +100,7 @@ export function Admin() {
 								<AdminUserManagementButton
 									title="Add user"
 									icon={<FaPlus />}
-									onClick={() => setShowModal(true)}
+									onClick={() => setShowAddUserModal(true)}
 									type="button"
 								/>
 							</div>
@@ -99,7 +108,12 @@ export function Admin() {
 							{error && (
 								<div className="text-red-500">Error: {error.message}</div>
 							)}
-							{!isLoading && !error && <AdminUsersTable users={usersData} />}
+							{!isLoading && !error && (
+								<AdminUsersTable
+									users={usersData}
+									refetchAllUsers={refetchAllUsers}
+								/>
+							)}
 						</AdminDashboardPanel>
 					</TabPanel>
 					<TabPanel>
