@@ -1,5 +1,5 @@
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
-import { MovieGrid } from "@/components/MovieGrid";
+import { MovieGrid } from "@/components/movie/MovieGrid";
 import { Suspense } from "react";
 import { MdOutlineUpcoming } from "react-icons/md";
 

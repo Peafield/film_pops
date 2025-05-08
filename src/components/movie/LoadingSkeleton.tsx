@@ -1,5 +1,5 @@
-import { UUID, randomUUID } from "node:crypto";
-import { SkeletonCard } from "./SkeletonCard";
+import { randomUUID } from "node:crypto";
+import { SkeletonCard } from "../SkeletonCard";
 
 export function LoadingSkeleton({ count = 12 }: { count?: number }) {
 	return (

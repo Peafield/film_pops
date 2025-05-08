@@ -1,7 +1,7 @@
 "use client";
 
 import type { TMDBMovie } from "@/types";
-import { motion } from "framer-motion"; // Using framer-motion based on syntax
+import { motion } from "framer-motion";
 import { useState } from "react";
 
 type MovieCardProps = {
