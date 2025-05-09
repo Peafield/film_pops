@@ -129,6 +129,7 @@ export function AdminUsersTable({
 										<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
 											<button
 												type="button"
+												disabled={true}
 												className="text-primary-500 hover:text-primary-600 mr-3 cursor-pointer"
 											>
 												<FaEdit />

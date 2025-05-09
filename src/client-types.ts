@@ -22,3 +22,17 @@ export const UserSchema = z.object({
 });
 
 export type User = z.infer<typeof UserSchema>;
+
+export const UpdateUserFormSchema = z.object({
+	name: z
+		.string()
+		.trim()
+		.min(2, {
+			message: "Please enter a name that is greater than 2 characters.",
+		})
+		.transform((val) => val.charAt(0).toUpperCase() + val.slice(1))
+		.optional(),
+	email: z.string().email().optional(),
+});
+
+export type UpdateUserForm = z.infer<typeof UpdateUserFormSchema>;

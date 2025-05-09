@@ -23,6 +23,9 @@ async function initializeAuth() {
 						defaultValue: "user",
 					},
 				},
+				changeEmail: {
+					enabled: true,
+				},
 			},
 			plugins: [nextCookies(), admin()],
 			session: {
