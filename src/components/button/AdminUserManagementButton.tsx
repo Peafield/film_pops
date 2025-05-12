@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 
@@ -8,6 +9,7 @@ type AdminUserManagementButtonProps = {
 	onClick?: () => void | Promise<void>;
 	isModal?: boolean;
 	form?: string;
+	isDangerModal?: boolean;
 };
 
 export function AdminUserManagementButton({
@@ -17,6 +19,7 @@ export function AdminUserManagementButton({
 	isModal = false,
 	type,
 	form,
+	isDangerModal = false,
 }: AdminUserManagementButtonProps) {
 	const [isMounted, setIsMounted] = useState(false);
 
@@ -33,7 +36,12 @@ export function AdminUserManagementButton({
 			form={form}
 			type={type}
 			onClick={onClick}
-			className="bg-indigo-500 hover:bg-indigo-900 text-white px-4 py-2 rounded-lg flex items-center cursor-pointer"
+			className={cn(
+				"bg-indigo-500 hover:bg-indigo-900 text-white px-4 py-2 rounded-lg flex items-center cursor-pointer",
+				{
+					"bg-red-600 hover:bg-red-900": isDangerModal,
+				},
+			)}
 		>
 			{icon && <span className="md:mr-2">{icon}</span>}
 			{isMounted ? (isMobile && !isModal ? null : title) : null}

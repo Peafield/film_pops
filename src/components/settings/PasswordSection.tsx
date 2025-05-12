@@ -99,9 +99,7 @@ export function PasswordSection() {
 
 	return (
 		<SettingsContainer>
-			<div className="flex items-center justify-between mb-6">
-				<SettingsHeading icon={<FaKey />} title="Change Password" />
-			</div>
+			<SettingsHeading icon={<FaKey />} title="Change Password" />
 			<form onSubmit={handleSubmit} className="space-y-6">
 				<div>
 					<label

@@ -65,6 +65,7 @@ export function Admin() {
 						isOpen={showAddUserModal}
 						onClose={closeAddUserModal}
 						formId="admin-create-user-form"
+						isDangerModal={false}
 					>
 						<CreateUserAdminForm
 							formId="admin-create-user-form"

@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import { useEffect, useRef } from "react";
 import { FaTimes } from "react-icons/fa";
 import { AdminUserManagementButton } from "./button/AdminUserManagementButton";
@@ -11,6 +12,7 @@ type ModalProps = {
 	buttonTitle?: string;
 	formId?: string;
 	primaryButtonOnClick?: () => void | Promise<void>;
+	isDangerModal?: boolean;
 };
 
 export function Modal({
@@ -22,6 +24,7 @@ export function Modal({
 	buttonTitle,
 	formId,
 	primaryButtonOnClick,
+	isDangerModal = false,
 }: ModalProps) {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -76,10 +79,20 @@ export function Modal({
 				{/* Modal Header */}
 				<header className="flex items-center justify-between p-5 border-b border-gray-700">
 					<div className=" flex items-center space-x-3 text-xl">
-						<div className="p-2 rounded-lg bg-indigo-900/30 text-indigo-400 ">
+						<span
+							className={cn("text-indigo-400", {
+								"text-red-400": isDangerModal,
+							})}
+						>
 							{icon}
-						</div>
-						<h3 className="font-semibold text-white">{title}</h3>
+						</span>
+						<h3
+							className={cn("font-semibold text-white", {
+								"text-red-400": isDangerModal,
+							})}
+						>
+							{title}
+						</h3>
 					</div>
 					<button
 						type="button"
@@ -107,6 +120,7 @@ export function Modal({
 						type="submit"
 						form={formId}
 						onClick={primaryButtonOnClick}
+						isDangerModal={isDangerModal}
 					/>
 				</div>
 			</dialog>

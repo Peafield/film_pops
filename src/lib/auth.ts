@@ -26,6 +26,9 @@ async function initializeAuth() {
 				changeEmail: {
 					enabled: true,
 				},
+				deleteUser: {
+					enabled: true,
+				},
 			},
 			plugins: [nextCookies(), admin()],
 			session: {

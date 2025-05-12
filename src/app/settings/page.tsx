@@ -1,5 +1,6 @@
 import { Container } from "@/components/pages/Container";
 import { PageHeader } from "@/components/pages/PageHeader";
+import { DangerZone } from "@/components/settings/DangerZone";
 import { PasswordSection } from "@/components/settings/PasswordSection";
 import { ProfileSection } from "@/components/settings/ProfileSection";
 import { FaUserCog } from "react-icons/fa";
@@ -15,7 +16,7 @@ export default function SettingsPage() {
 			{/* TODO: Add skeleton here */}
 			<ProfileSection />
 			<PasswordSection />
-			{/* TODO: delete account */}
+			<DangerZone />
 		</Container>
 	);
 }

@@ -65,6 +65,7 @@ export function AdminUsersTable({
 						isOpen={showDeleteModal}
 						onClose={closeDeleteModal}
 						primaryButtonOnClick={handleDeleteUser}
+						isDangerModal
 					>
 						<DeleteUser user={selectedUser} />
 					</Modal>,
@@ -127,13 +128,6 @@ export function AdminUsersTable({
 											</span>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-											<button
-												type="button"
-												disabled={true}
-												className="text-primary-500 hover:text-primary-600 mr-3 cursor-pointer"
-											>
-												<FaEdit />
-											</button>
 											<button
 												type="button"
 												onClick={() => openDeleteModal(user.id)}
