@@ -1,9 +1,20 @@
+"use client";
+
 import { getAllUpComingUKMovies } from "@/lib/tmdb";
 import type { TMDBMovie } from "@/types";
+import { useState } from "react";
 import { MovieCard } from "./MovieCard";
+import { MovieModal } from "./MovieModal";
 
-export async function MovieGrid() {
-	const movieData: TMDBMovie[] | null = await getAllUpComingUKMovies();
+type MovieGridProps = {
+	movieData: TMDBMovie[] | null;
+};
+
+export function MovieGrid({ movieData }: MovieGridProps) {
+	const [showMovieModal, setShowMovieModal] = useState(false);
+	const [selectedMovie, setSelectedMovie] = useState<TMDBMovie | undefined>(
+		undefined,
+	);
 	if (!movieData) {
 		return (
 			<p className="text-center text-red-500 col-span-full">
@@ -20,11 +31,33 @@ export async function MovieGrid() {
 		);
 	}
 
+	const openMovieModal = () => {
+		setShowMovieModal(true);
+	};
+
+	const closeMovieModal = () => {
+		setShowMovieModal(false);
+	};
+
 	return (
-		<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-			{movieData.map((movie) => (
-				<MovieCard key={movie.id} movie={movie} />
-			))}
-		</div>
+		<>
+			{showMovieModal && selectedMovie && (
+				<MovieModal
+					isOpen={showMovieModal}
+					onClose={closeMovieModal}
+					movie={selectedMovie}
+				/>
+			)}
+			<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+				{movieData.map((movie) => (
+					<MovieCard
+						key={movie.id}
+						movie={movie}
+						toggleOpenMovieModal={openMovieModal}
+						setSelectedMovie={setSelectedMovie}
+					/>
+				))}
+			</div>
+		</>
 	);
 }

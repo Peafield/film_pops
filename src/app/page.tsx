@@ -1,11 +1,12 @@
 import { Container } from "@/components/layout/Container";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { LoadingSkeleton } from "@/components/movie/LoadingSkeleton";
 import { MovieGrid } from "@/components/movie/MovieGrid";
-import { Suspense } from "react";
+import { getAllUpComingUKMovies } from "@/lib/tmdb";
+import type { TMDBMovie } from "@/types";
 import { MdOutlineUpcoming } from "react-icons/md";
 
-export default function Home() {
+export default async function Home() {
+	const movieData: TMDBMovie[] | null = await getAllUpComingUKMovies();
 	return (
 		<Container>
 			<PageHeader
@@ -13,9 +14,7 @@ export default function Home() {
 				icon={<MdOutlineUpcoming />}
 				subtitle="	Films out now and upcoming in the next 6 months."
 			/>
-			<Suspense fallback={<LoadingSkeleton count={18} />}>
-				<MovieGrid />
-			</Suspense>
+			<MovieGrid movieData={movieData} />
 		</Container>
 	);
 }
