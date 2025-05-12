@@ -3,9 +3,9 @@
 import { submitSignInForm } from "@/app/signin/action";
 import DOMPurify from "isomorphic-dompurify";
 import { AnimatePresence, easeInOut, motion } from "motion/react";
-import Link from "next/link";
 import { useActionState, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+
 // TODO: REFACTOR NOT DRY! (SEE SIGNUP FORM)
 export function SignIn() {
 	const initialState = {

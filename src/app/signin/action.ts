@@ -32,7 +32,7 @@ export async function submitSignInForm(
 	const validatedFields = SignInFormSchema.safeParse(formValues);
 
 	if (!validatedFields.success) {
-		console.log(
+		console.error(
 			"Form validation failed:",
 			validatedFields.error.flatten().fieldErrors,
 		);

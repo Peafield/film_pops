@@ -1,7 +1,5 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
-import { h1 } from "motion/react-client";
 import { usePathname } from "next/navigation";
 import { FilmPopsLogo } from "./FilmPopsLogo";
 import { Sidebar } from "./SideBar";
