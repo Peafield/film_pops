@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { FaPen, FaUserEdit } from "react-icons/fa";
 import { CustomToast } from "../CustomToast";
 import { SettingsContainer } from "./SettingsContainer";
+import { SettingsHeading } from "./SettingsHeader";
 
 export function ProfileSection() {
 	const { data: session } = authClient.useSession();
@@ -82,10 +83,7 @@ export function ProfileSection() {
 	return (
 		<SettingsContainer>
 			<div className="flex items-center justify-between mb-6">
-				<h2 className="text-xl font-semibold flex items-center-">
-					<FaUserEdit className="mr-2" />
-					Profile Information
-				</h2>
+				<SettingsHeading icon={<FaUserEdit />} title="Profile Information" />
 				<button
 					type="button"
 					aria-label="Edit profile button"
