@@ -1,7 +1,7 @@
+import { Container } from "@/components/layout/Container";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { LoadingSkeleton } from "@/components/movie/LoadingSkeleton";
 import { MovieGrid } from "@/components/movie/MovieGrid";
-import { Container } from "@/components/pages/Container";
-import { PageHeader } from "@/components/pages/PageHeader";
 import { Suspense } from "react";
 import { MdOutlineUpcoming } from "react-icons/md";
 

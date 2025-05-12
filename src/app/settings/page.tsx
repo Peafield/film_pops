@@ -1,5 +1,5 @@
-import { Container } from "@/components/pages/Container";
-import { PageHeader } from "@/components/pages/PageHeader";
+import { Container } from "@/components/layout/Container";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { DangerZone } from "@/components/settings/DangerZone";
 import { PasswordSection } from "@/components/settings/PasswordSection";
 import { ProfileSection } from "@/components/settings/ProfileSection";
