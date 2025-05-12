@@ -36,3 +36,38 @@ export const UpdateUserFormSchema = z.object({
 });
 
 export type UpdateUserForm = z.infer<typeof UpdateUserFormSchema>;
+
+export const ChangePasswordSchema = z
+	.object({
+		currentPassword: z.string().min(8, {
+			message: "Passwords must be at least 8 characters long",
+		}),
+		newPassword: z.string().min(8, {
+			message: "Passwords must be at least 8 characters long",
+		}),
+		confirmNewPassword: z.string().min(8, {
+			message: "Passwords must be at least 8 characters long",
+		}),
+	})
+	.superRefine(({ newPassword, confirmNewPassword }, ctx) => {
+		if (confirmNewPassword !== newPassword) {
+			ctx.addIssue({
+				code: "custom",
+				message: "New passwords do not match",
+				path: ["confirmNewPassword"],
+			});
+		}
+	});
+
+export type ChangePassword = z.infer<typeof ChangePasswordSchema>;
+
+export const ApiErrorSchema = z
+	.object({
+		code: z.string().optional(),
+		message: z.string().optional(),
+		status: z.number(),
+		statusText: z.string(),
+	})
+	.optional();
+
+export type ApiError = z.infer<typeof ApiErrorSchema>;

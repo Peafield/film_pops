@@ -1,6 +1,6 @@
 "use client";
 
-import { UpdateUserFormSchema } from "@/client-types";
+import { type ApiError, UpdateUserFormSchema } from "@/client-types";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/utils/cn";
 import { type FormEvent, useEffect, useState } from "react";
@@ -23,9 +23,8 @@ export function ProfileSection() {
 			setUpdatedUserData({ name: user.name, email: user.email });
 		}
 	}, [user]);
-
-	console.log(updatedUserData);
 	const [isEditProfileClicked, setIsEditProfileClicked] = useState(false);
+	const [isPending, setIsPending] = useState(false);
 
 	const handleEditProfileToggle = () => {
 		setIsEditProfileClicked((prev) => !prev);
@@ -33,6 +32,7 @@ export function ProfileSection() {
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		setIsPending(true);
 		const formValues = {
 			name: updatedUserData.name,
 			email: updatedUserData.email,
@@ -51,34 +51,57 @@ export function ProfileSection() {
 					message="Please check what you entered and try again."
 				/>,
 			);
+			setIsPending(false);
 			return;
 		}
 
 		const { name, email } = validatedFormValues.data;
 
+		let updateUserError: ApiError;
+
+		let changeEmailError: ApiError;
+
 		try {
 			if (name && name !== user?.name) {
-				await authClient.updateUser({
+				const { error: updateUserError } = await authClient.updateUser({
 					name: name,
 				});
 			}
 			if (email && email !== user?.email) {
-				await authClient.changeEmail({
+				const { error: changeEmailError } = await authClient.changeEmail({
 					newEmail: email,
 				});
 			}
-			toast.custom(
-				<CustomToast
-					variant="success"
-					message={"You've successfully updated your profile data."}
-				/>,
-			);
+			if (updateUserError) {
+				toast.custom(
+					<CustomToast
+						variant="error"
+						message={`Something went wrong: ${updateUserError.message}`}
+					/>,
+				);
+			} else if (changeEmailError) {
+				toast.custom(
+					<CustomToast
+						variant="error"
+						message={`Something went wrong: ${changeEmailError.message}`}
+					/>,
+				);
+			} else {
+				toast.custom(
+					<CustomToast
+						variant="success"
+						message={"You've successfully updated your profile."}
+					/>,
+				);
+			}
 		} catch (e) {
+			console.error("Profile Section Api Error:", e);
 			toast.custom(
 				<CustomToast variant="error" message={"Something's gone wrong!"} />,
 			);
 			console.error(e);
 		}
+		setIsPending(false);
 	};
 	return (
 		<SettingsContainer>
@@ -156,7 +179,7 @@ export function ProfileSection() {
 							type="submit"
 							className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition"
 						>
-							Save Changes
+							{isPending ? "Saving..." : "Save Changes"}
 						</button>
 					</div>
 				</div>
