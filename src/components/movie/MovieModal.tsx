@@ -55,6 +55,7 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
 			dialogNode.removeEventListener("click", handleClick);
 		};
 	}, [onClose]);
+
 	return createPortal(
 		// Modal overlay
 		<div className="fixed inset-0 z-50 p-4 backdrop-blur-sm flex items-center justify-center">
@@ -71,65 +72,73 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
 					<FaTimes />
 				</button>
 
-				<div className="md:flex">
-					{/* Movie Poster */}
-					<div className="md: w-1/3">
-						<img
-							src={posterURL}
-							alt={`Post for ${movie.title}`}
-							className="w-full h-full object-cover"
-						/>
-					</div>
-
-					{/* Movie Details */}
-					<div className="p-6 md:w-2/3">
-						<div className="mb-4">
-							<h2 className="text-2xl font-bold mb-1 text-white">
-								{movie.title}
-							</h2>
-							<div className="flex items-center text-gray-400 text-sm mb-4">
-								{/* TODO: Convert release date to 'Thursday, 24th April' or something similar */}
-								<span className="mr-3">{movie.release_date}</span>
-								{/* TODO: Add rating, length... */}
-							</div>
+				<div className="max-h-[65vh] md:max-h-[70vh] overflow-y-auto">
+					<div className="flex flex-col md:flex-row">
+						{/* Movie Poster */}
+						<div className="w-full md:w-1/3 flex-shrink-0">
+							<img
+								src={posterURL}
+								alt={`Post for ${movie.title}`}
+								className="w-full h-auto md:h-full object-cover"
+							/>
 						</div>
 
-						{/* Movie Overview */}
-						<div className="mb-6">
-							<h3 className="font-semibold mb-2 text-gray-300">Synopsis</h3>
-							<div className="max-h-32 overflow-y-auto pr-2 text-gray-300 text-sm">
-								{movie.overview}
+						{/* Movie Details */}
+						<div className="p-4 md:p-6 space-y-4 md:w-2/3">
+							<div className="mb-4">
+								<h2 className="text-2xl font-bold mb-1 text-white">
+									{movie.title}
+								</h2>
+								<div className="flex items-center text-gray-400 text-sm mb-4">
+									<span className="mr-3">
+										{movie.release_date
+											? new Date(movie.release_date).toLocaleDateString(
+													"en-GB",
+													{ year: "numeric", month: "long", day: "numeric" },
+												)
+											: "N/A"}
+									</span>
+									{/* TODO: Add rating, length... */}
+								</div>
 							</div>
-						</div>
 
-						{/* TODO: Add genres... */}
-
-						{/* Action Buttons */}
-						<div className="flex justify-between gap-3">
-							<button
-								type="button"
-								className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg flex items-center justify-center transition-colors"
-							>
-								<FaThumbsUp className="mr-2" />
-								<span>Yeah!</span>
-							</button>
-							<button
-								type="button"
-								className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-4 rounded-lg flex items-center justify-center transition-colors"
-							>
-								<FaQuestion className="mr-2" />
-								<span>Maybe</span>
-							</button>
-							<button
-								type="button"
-								className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg flex items-center justify-center transition-colors"
-							>
-								<FaThumbsDown className="mr-2" />
-								<span>Nope</span>
-							</button>
+							{/* Movie Overview */}
+							<div>
+								<h3 className="font-semibold mb-2 text-gray-300">Synopsis</h3>
+								<div className="max-h-32 overflow-y-auto pr-2 text-gray-300 text-sm">
+									{movie.overview}
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
+
+				{/* TODO: Add genres... */}
+
+				{/* Action Buttons */}
+				<footer className="flex flex-col sm:flex-row justify-around items-center p-4 border-t border-gray-700 space-y-3 sm:space-y-0 sm:space-x-3">
+					<button
+						type="button"
+						className="w-full sm:flex-1 flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						<FaThumbsUp className="mr-2" />
+						<span>Yeah!</span>
+					</button>
+					<button
+						type="button"
+						className="w-full sm:flex-1 flex items-center justify-center px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						<FaQuestion className="mr-2" />
+						<span>Maybe</span>
+					</button>
+					<button
+						type="button"
+						className="w-full sm:flex-1 flex items-center justify-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+					>
+						<FaThumbsDown className="mr-2" />
+						<span>Nope</span>
+					</button>
+				</footer>
 			</dialog>
 		</div>,
 		document.body,

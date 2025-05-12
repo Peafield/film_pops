@@ -2,7 +2,7 @@
 
 import { getAllUpComingUKMovies } from "@/lib/tmdb";
 import type { TMDBMovie } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MovieCard } from "./MovieCard";
 import { MovieModal } from "./MovieModal";
 
@@ -15,6 +15,19 @@ export function MovieGrid({ movieData }: MovieGridProps) {
 	const [selectedMovie, setSelectedMovie] = useState<TMDBMovie | undefined>(
 		undefined,
 	);
+
+	// Effect to stop scroll when model is open.
+	useEffect(() => {
+		if (showMovieModal) {
+			document.body.classList.add("overflow-hidden");
+		} else {
+			document.body.classList.remove("overflow-hidden");
+		}
+		return () => {
+			document.body.classList.remove("overflow-hidden");
+		};
+	}, [showMovieModal]);
+
 	if (!movieData) {
 		return (
 			<p className="text-center text-red-500 col-span-full">
@@ -31,12 +44,14 @@ export function MovieGrid({ movieData }: MovieGridProps) {
 		);
 	}
 
-	const openMovieModal = () => {
+	const openMovieModal = (movie: TMDBMovie) => {
+		setSelectedMovie(movie);
 		setShowMovieModal(true);
 	};
 
 	const closeMovieModal = () => {
 		setShowMovieModal(false);
+		setSelectedMovie(undefined);
 	};
 
 	return (
@@ -53,8 +68,7 @@ export function MovieGrid({ movieData }: MovieGridProps) {
 					<MovieCard
 						key={movie.id}
 						movie={movie}
-						toggleOpenMovieModal={openMovieModal}
-						setSelectedMovie={setSelectedMovie}
+						onCardClick={() => openMovieModal(movie)}
 					/>
 				))}
 			</div>
