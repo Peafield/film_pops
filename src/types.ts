@@ -47,6 +47,7 @@ export const SignInFormSchema = z.object({
 
 export const TMDBMovieSchema = z.object({
 	id: z.number(),
+	genre_ids: z.array(z.number()),
 	title: z.string(),
 	overview: z.string(),
 	popularity: z.number(),
@@ -64,3 +65,24 @@ export const TMDBMovieReponseSchema = z.object({
 });
 
 export type TMDBMovieReponse = z.infer<typeof TMDBMovieReponseSchema>;
+
+export interface MoviesApiResponse {
+	movies: TMDBMovie[];
+}
+
+export const RankChoiceSchema = z.enum(["yeah", "maybe", "nope"]);
+export type RankChoice = z.infer<typeof RankChoiceSchema>;
+
+export const MovieRankingSchema = z.object({
+	userId: z.string(),
+	movie: z.number(),
+	rank: RankChoiceSchema,
+	rankedAt: z.date(),
+});
+
+export type MovieRanking = z.infer<typeof MovieRankingSchema>;
+
+export const RankMovieActionSchema = z.object({
+	movieJSON: z.string(),
+	choice: RankChoiceSchema,
+});

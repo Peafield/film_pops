@@ -45,7 +45,6 @@ export async function fetchSingleMoviePage(
 			);
 			return null;
 		}
-
 		const data: TMDBMovieReponse = await res.json();
 		return data.results || [];
 	} catch (err) {

@@ -1,20 +1,41 @@
 "use client";
 
-import { getAllUpComingUKMovies } from "@/lib/tmdb";
-import type { TMDBMovie } from "@/types";
-import { useEffect, useState } from "react";
+import { rankMovieAction } from "@/app/actions/rankMovieAction";
+import { useGetAllmovies } from "@/hooks/movie/useGetAllMovies";
+import type { RankChoice, TMDBMovie } from "@/types";
+import { useActionState, useEffect, useState, useTransition } from "react";
+import toast from "react-hot-toast";
+import { CustomToast } from "../CustomToast";
+import { LoadingSkeleton } from "./LoadingSkeleton";
 import { MovieCard } from "./MovieCard";
 import { MovieModal } from "./MovieModal";
 
-type MovieGridProps = {
-	movieData: TMDBMovie[] | null;
-};
-
-export function MovieGrid({ movieData }: MovieGridProps) {
+export function MovieGrid() {
+	const { movieData, loading, error } = useGetAllmovies();
 	const [showMovieModal, setShowMovieModal] = useState(false);
 	const [selectedMovie, setSelectedMovie] = useState<TMDBMovie | undefined>(
 		undefined,
 	);
+	const [rankState, submitRankForm, isRankingPending] = useActionState(
+		rankMovieAction,
+		null,
+	);
+
+	const [isTransitioning, startTransition] = useTransition();
+
+	useEffect(() => {
+		if (rankState?.message) {
+			toast.custom(
+				<CustomToast
+					variant={rankState.success ? "success" : "error"}
+					message={rankState.message}
+				/>,
+			);
+		}
+		if (rankState?.success) {
+			closeMovieModal();
+		}
+	}, [rankState]);
 
 	// Effect to stop scroll when model is open.
 	useEffect(() => {
@@ -28,18 +49,22 @@ export function MovieGrid({ movieData }: MovieGridProps) {
 		};
 	}, [showMovieModal]);
 
-	if (!movieData) {
+	if (loading) {
+		return <LoadingSkeleton count={18} />;
+	}
+
+	if (error) {
 		return (
 			<p className="text-center text-red-500 col-span-full">
-				Failed to load movie data.
+				Error loading movies: {error}
 			</p>
 		);
 	}
 
-	if (movieData.length === 0) {
+	if (!movieData || movieData.length === 0) {
 		return (
 			<p className="text-center text-gray-400 col-span-full">
-				No upcoming movies found matching the criteria.
+				No upcoming movies found.
 			</p>
 		);
 	}
@@ -54,6 +79,16 @@ export function MovieGrid({ movieData }: MovieGridProps) {
 		setSelectedMovie(undefined);
 	};
 
+	const handleRank = (choice: RankChoice) => {
+		if (!selectedMovie) return;
+		const formData = new FormData();
+		formData.append("movieJSON", JSON.stringify(selectedMovie));
+		formData.append("choice", choice);
+		startTransition(() => {
+			submitRankForm(formData);
+		});
+	};
+
 	return (
 		<>
 			{showMovieModal && selectedMovie && (
@@ -61,6 +96,8 @@ export function MovieGrid({ movieData }: MovieGridProps) {
 					isOpen={showMovieModal}
 					onClose={closeMovieModal}
 					movie={selectedMovie}
+					onRank={handleRank}
+					isRanking={isRankingPending}
 				/>
 			)}
 			<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">

@@ -71,5 +71,3 @@ export const ApiErrorSchema = z
 	.optional();
 
 export type ApiError = z.infer<typeof ApiErrorSchema>;
-
-export type RankChoice = "yeah" | "maybe" | "nope";

@@ -1,6 +1,7 @@
 "use client";
 
-import type { TMDBMovie } from "@/types";
+import type { RankChoice, TMDBMovie } from "@/types";
+import { tmdbGenreMap } from "@/utils/tmdbGenreMap";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { FaQuestion, FaThumbsDown, FaThumbsUp, FaTimes } from "react-icons/fa";
@@ -9,9 +10,17 @@ type MovieModalProps = {
 	movie: TMDBMovie;
 	isOpen: boolean;
 	onClose: () => void;
+	onRank: (choice: RankChoice) => void;
+	isRanking: boolean;
 };
 
-export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
+export function MovieModal({
+	movie,
+	isOpen,
+	onClose,
+	onRank,
+	isRanking,
+}: MovieModalProps) {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
 	const posterURL = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
@@ -56,6 +65,11 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
 		};
 	}, [onClose]);
 
+	const genreNames = movie.genre_ids
+		?.map((id) => tmdbGenreMap[id])
+		.filter((name) => name)
+		.slice(0, 3);
+
 	return createPortal(
 		// Modal overlay
 		<div className="fixed inset-0 z-50 p-4 backdrop-blur-sm flex items-center justify-center">
@@ -98,7 +112,6 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
 												)
 											: "N/A"}
 									</span>
-									{/* TODO: Add rating, length... */}
 								</div>
 							</div>
 
@@ -109,31 +122,48 @@ export function MovieModal({ movie, isOpen, onClose }: MovieModalProps) {
 									{movie.overview}
 								</div>
 							</div>
+
+							<div className="flex flex-wrap gap-2 mb-6">
+								{genreNames &&
+									genreNames.length > 0 &&
+									genreNames.map((genre) => (
+										<span
+											key={genre}
+											className="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-xs"
+										>
+											{genre}
+										</span>
+									))}
+							</div>
 						</div>
 					</div>
 				</div>
-
-				{/* TODO: Add genres... */}
 
 				{/* Action Buttons */}
 				<footer className="flex flex-col sm:flex-row justify-around items-center p-4 border-t border-gray-700 space-y-3 sm:space-y-0 sm:space-x-3">
 					<button
 						type="button"
-						className="w-full sm:flex-1 flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+						onClick={() => onRank("yeah")}
+						disabled={isRanking}
+						className="w-full sm:flex-1 flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
 					>
 						<FaThumbsUp className="mr-2" />
 						<span>Yeah!</span>
 					</button>
 					<button
 						type="button"
-						className="w-full sm:flex-1 flex items-center justify-center px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+						onClick={() => onRank("maybe")}
+						disabled={isRanking}
+						className="w-full sm:flex-1 flex items-center justify-center px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
 					>
 						<FaQuestion className="mr-2" />
 						<span>Maybe</span>
 					</button>
 					<button
 						type="button"
-						className="w-full sm:flex-1 flex items-center justify-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+						onClick={() => onRank("nope")}
+						disabled={isRanking}
+						className="w-full sm:flex-1 flex items-center justify-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
 					>
 						<FaThumbsDown className="mr-2" />
 						<span>Nope</span>
