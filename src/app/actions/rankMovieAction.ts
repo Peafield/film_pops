@@ -3,17 +3,19 @@
 import { auth } from "@/lib/auth";
 import { getDb } from "@/lib/mongodb";
 import {
+	type RankChoice,
 	RankMovieActionSchema,
 	type TMDBMovie,
 	TMDBMovieSchema,
 } from "@/types";
-import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 type RankMovieActionResult = {
 	success: boolean;
 	message: string;
 	error?: string;
+	movieId?: number;
+	newRank?: RankChoice;
 };
 
 export async function rankMovieAction(
@@ -103,7 +105,6 @@ export async function rankMovieAction(
 		);
 
 		if (rankingResult.modifiedCount > 0 || rankingResult.upsertedCount > 0) {
-			revalidatePath("/pops-picks");
 			return {
 				success: true,
 				message: `Movie '${movieObject.title}' ranked as '${choice}'!`,

@@ -1,10 +1,40 @@
 "use client";
 
-import type { TMDBMovie } from "@/types";
+import type { RankChoice, TMDBMovie } from "@/types";
+import { cn } from "@/utils/cn";
+import { FaQuestion, FaThumbsDown, FaThumbsUp } from "react-icons/fa";
 
 type MovieCardProps = {
 	movie: TMDBMovie;
 	onCardClick: () => void;
+};
+
+const RankIndicatorIcon = ({ rank }: { rank: RankChoice }) => {
+	let icon = null;
+	let color = "";
+	switch (rank) {
+		case "yeah":
+			icon = <FaThumbsUp />;
+			color = "text-green-500";
+			break;
+		case "maybe":
+			icon = <FaQuestion />;
+			color = "text-yellow-500";
+			break;
+		case "nope":
+			icon = <FaThumbsDown />;
+			color = "text-red-500";
+			break;
+		default:
+			return null;
+	}
+	return (
+		<div
+			className={`absolute top-2 right-2 p-1.5 bg-gray-900 bg-opacity-70 rounded-full ${color}`}
+		>
+			{icon}
+		</div>
+	);
 };
 
 export function MovieCard({ movie, onCardClick }: MovieCardProps) {
@@ -12,7 +42,7 @@ export function MovieCard({ movie, onCardClick }: MovieCardProps) {
 
 	return (
 		<div
-			className="w-full cursor-pointer group"
+			className="w-full cursor-pointer group relative"
 			onClick={onCardClick}
 			onKeyUp={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
@@ -25,9 +55,12 @@ export function MovieCard({ movie, onCardClick }: MovieCardProps) {
 				<img
 					src={imageUrl}
 					alt={`Poster for ${movie.title}`}
-					className="w-full h-auto aspect-[2/3] object-cover"
+					className={cn("w-full h-auto aspect-[2/3] object-cover", {
+						"grayscale-100": movie.userRank === "nope",
+					})}
 					loading="lazy"
 				/>
+				{movie.userRank && <RankIndicatorIcon rank={movie.userRank} />}
 			</div>
 		</div>
 	);

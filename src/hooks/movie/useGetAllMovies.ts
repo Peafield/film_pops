@@ -1,38 +1,58 @@
-import { getAllUpComingUKMovies } from "@/lib/tmdb";
+import { getUserRankingsAction } from "@/app/actions/getUserRankingsAction";
 import type { MoviesApiResponse, TMDBMovie } from "@/types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function useGetAllmovies() {
-	const [movieData, setMovieData] = useState<TMDBMovie[] | null>(null);
+	const [actualMovieData, setActualMovieData] = useState<TMDBMovie[] | null>(
+		null,
+	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		async function fetchMovies() {
-			setLoading(true);
-			setError(null);
-			try {
-				const response = await fetch("/api/movies/upcoming");
-				if (!response.ok) {
-					const errorData = await response
-						.json()
-						.catch(() => ({ message: "Network response was not ok" }));
-					throw new Error(
-						errorData.message || `HTTP error! status: ${response.status}`,
-					);
-				}
-				const data: MoviesApiResponse = await response.json();
-				setMovieData(data.movies || []);
-			} catch (err) {
-				console.error("Error in useGetAllmovies:", err);
-				setError(err instanceof Error ? err.message : "Failed to load movies");
-				setMovieData([]);
-			} finally {
-				setLoading(false);
+	const fetchMoviesAndRankings = useCallback(async () => {
+		setError(null);
+		try {
+			const moviesResponse = await fetch("/api/movies/upcoming");
+			if (!moviesResponse.ok) {
+				const errorData = await moviesResponse
+					.json()
+					.catch(() => ({ message: "Network response was not ok" }));
+				throw new Error(
+					errorData.message || `HTTP error! status: ${moviesResponse.status}`,
+				);
 			}
+			const moviesApiData: MoviesApiResponse = await moviesResponse.json();
+			const rawMovies = moviesApiData.movies || [];
+
+			const userRankingsMap = await getUserRankingsAction();
+
+			const mergedMovies = rawMovies.map((movie) => ({
+				...movie,
+				userRank: userRankingsMap ? userRankingsMap[movie.id] : undefined,
+			}));
+			setActualMovieData(mergedMovies);
+		} catch (err) {
+			console.error("Error in useGetAllmovies (fetchMoviesAndRankings):", err);
+			setError(
+				err instanceof Error
+					? err.message
+					: "Failed to load movie data or rankings",
+			);
+			setActualMovieData([]);
+		} finally {
+			setLoading(false);
 		}
-		fetchMovies();
 	}, []);
 
-	return { movieData, loading, error };
+	useEffect(() => {
+		setLoading(true);
+		fetchMoviesAndRankings();
+	}, [fetchMoviesAndRankings]);
+
+	return {
+		movieData: actualMovieData,
+		loading,
+		error,
+		refetchMoviesAndRankings: fetchMoviesAndRankings,
+	};
 }

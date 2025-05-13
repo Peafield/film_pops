@@ -2,9 +2,11 @@
 
 import type { RankChoice, TMDBMovie } from "@/types";
 import { tmdbGenreMap } from "@/utils/tmdbGenreMap";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { FaQuestion, FaThumbsDown, FaThumbsUp, FaTimes } from "react-icons/fa";
+import { FaCircleInfo } from "react-icons/fa6";
 
 type MovieModalProps = {
 	movie: TMDBMovie;
@@ -135,6 +137,14 @@ export function MovieModal({
 										</span>
 									))}
 							</div>
+							<Link
+								href={`https://www.themoviedb.org/movie/${movie.id}`}
+								className="font-semibold mb-2 text-gray-300 hover:text-gray-500 flex items-center"
+								target="_blank"
+							>
+								<FaCircleInfo className="mr-2" />
+								More info
+							</Link>
 						</div>
 					</div>
 				</div>

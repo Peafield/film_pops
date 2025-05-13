@@ -53,6 +53,7 @@ export const TMDBMovieSchema = z.object({
 	popularity: z.number(),
 	poster_path: z.string(),
 	release_date: z.string(),
+	userRank: z.enum(["yeah", "maybe", "nope"]).optional().nullable(),
 });
 
 export type TMDBMovie = z.infer<typeof TMDBMovieSchema>;
@@ -75,7 +76,7 @@ export type RankChoice = z.infer<typeof RankChoiceSchema>;
 
 export const MovieRankingSchema = z.object({
 	userId: z.string(),
-	movie: z.number(),
+	movieId: z.number(),
 	rank: RankChoiceSchema,
 	rankedAt: z.date(),
 });
@@ -86,3 +87,7 @@ export const RankMovieActionSchema = z.object({
 	movieJSON: z.string(),
 	choice: RankChoiceSchema,
 });
+
+export type UserRankingsMap = Record<number, RankChoice>;
+
+export type MovieGridFilter = "all" | "yeah" | "maybe" | "nope" | "toRank";
