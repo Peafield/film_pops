@@ -1,3 +1,5 @@
+"use client";
+
 import { useGetPopsPicks } from "@/hooks/popsPicks/useGetPopsPicks";
 
 export function PopsPicks() {
