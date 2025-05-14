@@ -13,7 +13,7 @@ export default function Home() {
 				icon={<MdOutlineUpcoming />}
 				subtitle="	Films out now and upcoming in the next 6 months."
 			/>
-			<Suspense fallback={<LoadingSkeleton count={18} />}>
+			<Suspense fallback={<LoadingSkeleton />}>
 				<MovieGrid />
 			</Suspense>
 		</Container>

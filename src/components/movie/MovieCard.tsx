@@ -1,58 +1,67 @@
 "use client";
 
-import type { TMDBMovie } from "@/types";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import type { RankChoice, TMDBMovie } from "@/types";
+import { cn } from "@/utils/cn";
+import { FaQuestion, FaThumbsDown, FaThumbsUp } from "react-icons/fa";
 
 type MovieCardProps = {
 	movie: TMDBMovie;
+	onCardClick: () => void;
 };
 
-export function MovieCard({ movie }: MovieCardProps) {
-	const [isFlipped, setIsFlipped] = useState(false);
+const RankIndicatorIcon = ({ rank }: { rank: RankChoice }) => {
+	let icon = null;
+	let color = "";
+	switch (rank) {
+		case "yeah":
+			icon = <FaThumbsUp />;
+			color = "text-green-500";
+			break;
+		case "maybe":
+			icon = <FaQuestion />;
+			color = "text-yellow-500";
+			break;
+		case "nope":
+			icon = <FaThumbsDown />;
+			color = "text-red-500";
+			break;
+		default:
+			return null;
+	}
+	return (
+		<div
+			className={`absolute top-2 right-2 p-1.5 bg-gray-900 bg-opacity-70 rounded-full ${color}`}
+		>
+			{icon}
+		</div>
+	);
+};
 
+export function MovieCard({ movie, onCardClick }: MovieCardProps) {
 	const imageUrl = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
 
 	return (
 		<div
-			className="w-full aspect-[2/3] perspective-distant cursor-pointer group "
-			onClick={() => setIsFlipped((prev) => !prev)}
+			className="w-full cursor-pointer group relative"
+			onClick={onCardClick}
 			onKeyUp={(e) => {
-				if (e.key === "Enter" || e.key === " ") setIsFlipped((prev) => !prev);
+				if (e.key === "Enter" || e.key === " ") {
+					onCardClick();
+				}
 			}}
-			title={`Click to see details for ${movie.title}`}
+			aria-label="Movie card"
 		>
-			{/* Inner container for 3D transform */}
-			<motion.div
-				animate={{ rotateY: isFlipped ? 180 : 0 }}
-				transition={{ duration: 0.6, ease: "easeInOut" }}
-				className="relative w-full h-full transform-3d rounded-lg shadow-lg hover:ring-2 hover:ring-amber-600 hover:ring-offset-2 hover:ring-offset-black"
-			>
-				{/* --- Front Side --- */}
-				<motion.div className="absolute inset-0 backface-hidden overflow-hidden rounded-lg">
-					<img
-						src={imageUrl}
-						alt={`${movie.title} Poster`}
-						className="w-full h-full object-cover"
-						loading="lazy"
-					/>
-				</motion.div>
-
-				{/* --- Back Side --- */}
-				<motion.div className="absolute inset-0 backface-hidden transform rotate-y-180 flex flex-col justify-between items-center p-3 sm:p-4 bg-gray-800 text-white rounded-lg overflow-hidden">
-					<h3 className="text-base sm:text-lg font-bold text-center mb-1 sm:mb-2 line-clamp-2">
-						{movie.title}
-					</h3>
-					{/* Scrollable overview area */}
-					<p className="text-xs sm:text-sm text-center overflow-y-auto flex-grow mb-2 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700 max-h-[50%] sm:max-h-[60%]">
-						{movie.overview || "No overview available."}
-					</p>
-					{/* Release Date */}
-					<p className="text-xs sm:text-sm font-light mb-2">
-						Release: {movie.release_date || "N/A"}
-					</p>
-				</motion.div>
-			</motion.div>
+			<div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform hover:scale-105">
+				<img
+					src={imageUrl}
+					alt={`Poster for ${movie.title}`}
+					className={cn("w-full h-auto aspect-[2/3] object-cover", {
+						"grayscale-100": movie.userRank === "nope",
+					})}
+					loading="lazy"
+				/>
+				{movie.userRank && <RankIndicatorIcon rank={movie.userRank} />}
+			</div>
 		</div>
 	);
 }
