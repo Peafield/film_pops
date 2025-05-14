@@ -114,7 +114,3 @@ export const SCORE_WEIGHTS: Record<RankChoice, number> = {
 	maybe: 1,
 	nope: -1,
 };
-
-export interface PopsPicksResponse {
-	picks: PopsPickMovie[];
-}

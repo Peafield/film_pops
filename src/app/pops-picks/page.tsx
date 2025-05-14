@@ -13,7 +13,8 @@ export default async function PopsPicksPage() {
 				icon={<FaRankingStar />}
 				subtitle="Highest voted films out now or soon."
 			/>
-			<Suspense fallback={<LoadingSkeleton />}>
+			{/* TODO: create pops' picks fallback */}
+			<Suspense fallback={<LoadingSkeleton count={3} />}>
 				<PopsPicks />
 			</Suspense>
 		</Container>

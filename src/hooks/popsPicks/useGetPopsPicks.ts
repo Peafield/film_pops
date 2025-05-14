@@ -1,8 +1,12 @@
-import type { PopsPickMovie, PopsPicksResponse } from "@/types";
+import type { GetPopsPicksResult, PopsPickMovie } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 
+interface ApiRouteResponse {
+	popsPicks: GetPopsPicksResult;
+}
+
 export function useGetPopsPicks() {
-	const [popsPicksData, setPopsPicksData] = useState<PopsPickMovie[] | null>(
+	const [popsPicksData, setPopsPicksData] = useState<GetPopsPicksResult | null>(
 		null,
 	);
 	const [loading, setLoading] = useState(true);
@@ -21,15 +25,26 @@ export function useGetPopsPicks() {
 						`HTTP error! status: ${popsPicksResponse.status}`,
 				);
 			}
-			const popsPicksApiData: PopsPicksResponse =
-				await popsPicksResponse.json();
-			setPopsPicksData(popsPicksApiData.picks);
+			const responseJson: ApiRouteResponse = await popsPicksResponse.json();
+			if (responseJson?.popsPicks) {
+				setPopsPicksData(responseJson.popsPicks);
+			} else {
+				console.warn(
+					"Unexpected API response structure for Pops' Picks:",
+					responseJson,
+				);
+				setPopsPicksData({
+					success: false,
+					picks: [],
+					message: "Unexpected data format.",
+				});
+			}
 		} catch (err) {
 			console.error("Error in useGetPopsPicks (fetchPopsPicks):", err);
 			setError(
 				err instanceof Error ? err.message : "Failed to load pops' picks data",
 			);
-			setPopsPicksData([]);
+			setPopsPicksData(null);
 		} finally {
 			setLoading(false);
 		}
@@ -41,7 +56,7 @@ export function useGetPopsPicks() {
 	}, [fetchPopsPicks]);
 
 	return {
-		popsPicksData,
+		popsPicksData: popsPicksData,
 		loading,
 		error,
 		refetchPopsPicks: fetchPopsPicks,
