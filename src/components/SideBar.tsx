@@ -117,7 +117,7 @@ const items = [
 	{
 		title: "Pops' Picks",
 		Icon: PiRanking,
-		href: "/popspicks",
+		href: "/pops-picks",
 		action: "toggle",
 	},
 	{

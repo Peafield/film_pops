@@ -1,26 +1,26 @@
 import { Container } from "@/components/layout/Container";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { LoadingSkeleton } from "@/components/movie/LoadingSkeleton";
-import { MovieGrid } from "@/components/movie/MovieGrid";
+import { PopsPicks } from "@/components/popsPicks/PopsPicks";
 import { Suspense } from "react";
-import { MdOutlineUpcoming } from "react-icons/md";
+import { FaRankingStar } from "react-icons/fa6";
 
-export default function Home() {
+export default async function PopsPicksPage() {
 	return (
 		<Container>
 			<PageHeader
-				title="Upcoming Films"
-				icon={<MdOutlineUpcoming />}
-				subtitle="Films out now and upcoming in the next 6 months."
+				title="Pops' Picks"
+				icon={<FaRankingStar />}
+				subtitle="Highest voted films out now or soon."
 			/>
 			<Suspense fallback={<LoadingSkeleton />}>
-				<MovieGrid />
+				<PopsPicks />
 			</Suspense>
 		</Container>
 	);
 }
 
 export const metadata = {
-	title: "Upcoming Movies",
-	description: "Upcoming cinema releases in the UK.",
+	title: "Pops' Picks",
+	description: "Highest voted on films.",
 };
