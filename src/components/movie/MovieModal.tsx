@@ -5,7 +5,13 @@ import { tmdbGenreMap } from "@/utils/tmdbGenreMap";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { FaQuestion, FaThumbsDown, FaThumbsUp, FaTimes } from "react-icons/fa";
+import {
+	FaQuestion,
+	FaThumbsDown,
+	FaThumbsUp,
+	FaTimes,
+	FaTimesCircle,
+} from "react-icons/fa";
 import { FaCircleInfo } from "react-icons/fa6";
 
 type MovieModalProps = {
@@ -78,30 +84,30 @@ export function MovieModal({
 			{/* Modal Container */}
 			<dialog
 				ref={dialogRef}
-				className="m-auto bg-gray-800 rounded-xl max-w-2xl w-full overflow-hidden animate-fade-in transform transition-all"
+				className="m-auto bg-gray-800 rounded-xl max-w-2xl w-full overflow-y-auto animate-fade-in transform transition-all"
 			>
 				<button
 					type="button"
 					onClick={onClose}
 					className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-200 transition-colors"
 				>
-					<FaTimes />
+					<FaTimesCircle size={24} />
 				</button>
 
-				<div className="max-h-[65vh] md:max-h-[70vh] overflow-y-auto">
+				<div className="overflow-y-auto flex-grow">
 					<div className="flex flex-col md:flex-row">
 						{/* Movie Poster */}
 						<div className="w-full md:w-1/3 flex-shrink-0">
 							<img
 								src={posterURL}
 								alt={`Post for ${movie.title}`}
-								className="w-full h-auto md:h-full object-cover"
+								className="w-full h-full object-cover"
 							/>
 						</div>
 
 						{/* Movie Details */}
 						<div className="p-4 md:p-6 space-y-4 md:w-2/3">
-							<div className="mb-4">
+							<div className="mb-0">
 								<h2 className="text-2xl font-bold mb-1 text-white">
 									{movie.title}
 								</h2>
@@ -119,16 +125,14 @@ export function MovieModal({
 
 							{/* Movie Overview */}
 							<div>
-								<h3 className="font-semibold mb-2 text-gray-300">Synopsis</h3>
+								<h3 className="font-semibold mb-1 text-gray-300">Synopsis</h3>
 								<div className="max-h-32 overflow-y-auto pr-2 text-gray-300 text-sm">
 									{movie.overview}
 								</div>
 							</div>
-
-							<div className="flex flex-wrap gap-2 mb-6">
-								{genreNames &&
-									genreNames.length > 0 &&
-									genreNames.map((genre) => (
+							{genreNames && genreNames.length > 0 && (
+								<div className="flex flex-wrap gap-2 mb-3">
+									{genreNames.map((genre) => (
 										<span
 											key={genre}
 											className="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-xs"
@@ -136,11 +140,13 @@ export function MovieModal({
 											{genre}
 										</span>
 									))}
-							</div>
+								</div>
+							)}
 							<Link
 								href={`https://www.themoviedb.org/movie/${movie.id}`}
 								className="font-semibold mb-2 text-gray-300 hover:text-gray-500 flex items-center"
 								target="_blank"
+								rel="noopener noreferrer"
 							>
 								<FaCircleInfo className="mr-2" />
 								More info

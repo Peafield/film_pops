@@ -1,5 +1,5 @@
 import type { PopsPickMovie } from "@/types";
-import { useMemo, useState as useSectionState } from "react";
+import { useState as useSectionState } from "react";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { PopsPicksMovieCard } from "./PopsPicksMovieCard";
 import { PopsPicksRankSectionHeader } from "./PopsPicksRankSectionHeader";
@@ -26,7 +26,7 @@ export function PopsPicksRankSection({
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
-				className="w-full flex justify-between items-center text-sm md:text-xl  font-semibold  mb-4 pb-2 border-b-2 border-gray-700 hover:text-indigo-300 transition-colors"
+				className="w-full flex justify-between items-center text-lg md:text-xl font-semibold  mb-4 pb-2 border-b-2 border-gray-700 hover:text-indigo-300 transition-colors"
 				aria-expanded={isOpen}
 				aria-controls={`section-content-${title.replace(/\s+/g, "-")}`}
 			>

@@ -13,7 +13,7 @@ export function PopsPicksRankSectionHeader({
 }: PopsPicksRankSectionHeaderProps) {
 	return (
 		<h3
-			className={cn("text-sm md:text-xl font-semibold flex items-center", {
+			className={cn("text-lg md:text-xl font-semibold flex items-center", {
 				[className as string]: !!className,
 			})}
 		>

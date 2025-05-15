@@ -1,7 +1,6 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { InferUserFromClient } from "better-auth";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -23,6 +22,7 @@ export const Sidebar = () => {
 	useClickAway(ref, () => setOpen(false));
 	const handleToggleSidebar = () => setOpen((prev) => !prev);
 	const handleSignOut = async () => {
+		setOpen(false);
 		await authClient.signOut({
 			fetchOptions: {
 				onSuccess: () => {
@@ -84,10 +84,10 @@ export const Sidebar = () => {
 												href={href}
 												className="flex items-center justify-between gap-5 p-5 transition-all border-b-2 hover:ring-2 hover:ring-amber-600 border-zinc-800 cursor-pointer"
 											>
-												<motion.span {...framerText(idx)}>{title}</motion.span>
-												<motion.div {...framerIcon}>
+												<span>{title}</span>
+												<div>
 													<Icon className="text-2xl" />
-												</motion.div>
+												</div>
 											</a>
 										</li>
 									);
@@ -141,27 +141,6 @@ const framerSidebarPanel = {
 	animate: { x: 0 },
 	exit: { x: "-100%" },
 	transition: { duration: 0.1 },
-};
-
-const framerText = (delay: number) => {
-	return {
-		initial: { opacity: 0, x: -50 },
-		animate: { opacity: 1, x: 0 },
-		transition: {
-			delay: 0.2 + delay / 5,
-		},
-	};
-};
-
-const framerIcon = {
-	initial: { scale: 0 },
-	animate: { scale: 1 },
-	transition: {
-		type: "spring",
-		stiffness: 260,
-		damping: 20,
-		delay: 1.5,
-	},
 };
 
 // Code based on https://www.freecodecamp.org/news/create-a-fully-animated-sidebar/

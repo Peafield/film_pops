@@ -13,7 +13,6 @@ export default function SettingsPage() {
 				icon={<FaUserCog />}
 				subtitle="Manage your profile and account preferences"
 			/>
-			{/* TODO: Add skeleton here */}
 			<ProfileSection />
 			<PasswordSection />
 			<DangerZone />

@@ -5,7 +5,9 @@ import { authClient } from "@/lib/auth-client";
 import { type FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash, FaKey } from "react-icons/fa";
+import { FaArrowsRotate } from "react-icons/fa6";
 import { CustomToast } from "../CustomToast";
+import { PrimaryButton } from "../button/PrimaryButton";
 import { SettingsContainer } from "./SettingsContainer";
 import { SettingsHeading } from "./SettingsHeader";
 
@@ -100,7 +102,11 @@ export function PasswordSection() {
 	return (
 		<SettingsContainer>
 			<SettingsHeading icon={<FaKey />} title="Change Password" />
-			<form onSubmit={handleSubmit} className="space-y-6">
+			<form
+				id="changePasswordForm"
+				onSubmit={handleSubmit}
+				className="space-y-6"
+			>
 				<div>
 					<label
 						htmlFor="currentPassword"
@@ -191,12 +197,12 @@ export function PasswordSection() {
 				</div>
 
 				<div className="flex justify-end pt-4">
-					<button
+					<PrimaryButton
 						type="submit"
-						className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition"
-					>
-						{isPending ? "Updating..." : "Update Password"}
-					</button>
+						title={isPending ? "Updating..." : "Update Password"}
+						form="changePasswordForm"
+						icon={<FaArrowsRotate />}
+					/>
 				</div>
 			</form>
 		</SettingsContainer>

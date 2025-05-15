@@ -10,7 +10,7 @@ import { LiaUsersCogSolid } from "react-icons/lia";
 import { PiFilmStrip } from "react-icons/pi";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { Modal } from "../Modal";
-import { AdminUserManagementButton } from "../button/AdminUserManagementButton";
+import { PrimaryButton } from "../button/PrimaryButton";
 import { CreateUserAdminForm } from "../forms/CreateUserAdminForm";
 import { AdminDashboardPanel } from "./AdminDashboardPanel";
 import { AdminDashBoardPanelTitle } from "./AdminDashboardPanelTitle";
@@ -92,13 +92,13 @@ export function Admin() {
 						<AdminDashboardPanel>
 							<div className="flex justify-between items-center mb-6">
 								<AdminDashBoardPanelTitle title="User Management" />
-								<AdminUserManagementButton
+								<PrimaryButton
 									title="Refresh"
 									icon={<FaRotate />}
 									onClick={refetchAllUsers}
 									type="button"
 								/>
-								<AdminUserManagementButton
+								<PrimaryButton
 									title="Add user"
 									icon={<FaPlus />}
 									onClick={() => setShowAddUserModal(true)}

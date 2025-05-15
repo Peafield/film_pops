@@ -1,7 +1,7 @@
 import { cn } from "@/utils/cn";
 import { useEffect, useRef } from "react";
-import { FaTimes } from "react-icons/fa";
-import { AdminUserManagementButton } from "./button/AdminUserManagementButton";
+import { FaTimes, FaTimesCircle } from "react-icons/fa";
+import { PrimaryButton } from "./button/PrimaryButton";
 
 type ModalProps = {
 	title?: string;
@@ -97,9 +97,9 @@ export function Modal({
 					<button
 						type="button"
 						onClick={onClose}
-						className="text-gray-400 hover:text-gray-200 transition-colors"
+						className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-200 transition-colors"
 					>
-						<FaTimes />
+						<FaTimesCircle size={24} />
 					</button>
 				</header>
 
@@ -114,7 +114,7 @@ export function Modal({
 					>
 						Cancel
 					</button>
-					<AdminUserManagementButton
+					<PrimaryButton
 						title={buttonTitle || "Save Changes"}
 						isModal={true}
 						type="submit"

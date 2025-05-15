@@ -7,7 +7,6 @@ import {
 	FaThumbsUp,
 	FaVoteYea,
 } from "react-icons/fa";
-import { FaRankingStar } from "react-icons/fa6";
 import { VoteItem } from "./PopsPicksVoteItem";
 
 type PopsPicksMovieCardProps = {
@@ -59,11 +58,17 @@ export function PopsPicksMovieCard({ movie }: PopsPicksMovieCardProps) {
 							)}
 						</p>
 						<div className="flex items-center gap-4 ">
-							<p className="text-xs text-gray-500 mb-2 flex items-center">
+							<p
+								className="text-xs text-gray-500 mb-2 flex items-center"
+								title="Total votes"
+							>
 								<FaVoteYea className="mr-2" />
 								<span className="font-semibold">{movie.totalUserVotes}</span>
 							</p>
-							<p className="text-xs text-gray-500 mb-2 flex items-center">
+							<p
+								className="text-xs text-gray-500 mb-2 flex items-center"
+								title="Voting score"
+							>
 								<FaStar className="mr-2" />
 								<span className="font-semibold">{movie.totalScore}</span>
 							</p>
@@ -73,17 +78,17 @@ export function PopsPicksMovieCard({ movie }: PopsPicksMovieCardProps) {
 					<div className="space-y-1 text-xs">
 						<VoteItem
 							icon={<FaThumbsUp />}
-							color="text-green-400"
+							color="yeah"
 							percentage={yeahPercentage}
 						/>
 						<VoteItem
 							icon={<FaQuestion />}
-							color="text-yellow-400"
+							color="maybe"
 							percentage={maybePercentage}
 						/>
 						<VoteItem
 							icon={<FaThumbsDown />}
-							color="text-red-400"
+							color="nope"
 							percentage={nopePercentage}
 						/>
 					</div>

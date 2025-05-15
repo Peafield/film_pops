@@ -96,7 +96,7 @@ const ClapperboardLoader: React.FC<ClapperboardLoaderProps> = ({
 				/>
 			</g>
 
-			<g id="top_arm_group" transform="translate(100, 125)">
+			<g id="top_arm_group" transform="translate(102, 125)">
 				<path
 					id="top_arm"
 					style={{
@@ -114,8 +114,8 @@ const ClapperboardLoader: React.FC<ClapperboardLoaderProps> = ({
 						type="rotate"
 						from="0 163.45808 367.91802"
 						to="-25 163.45808 367.91802"
-						dur="0.25s"
-						begin="0s; anim_close.end + 1s"
+						dur="0.2s"
+						begin="0s; anim_close.end + 0.5s"
 						fill="freeze"
 						id="anim_open"
 					/>
@@ -125,8 +125,8 @@ const ClapperboardLoader: React.FC<ClapperboardLoaderProps> = ({
 						type="rotate"
 						from="-25 163.45808 367.91802"
 						to="0 163.45808 367.91802"
-						dur="0.25s"
-						begin="anim_open.end + 1s"
+						dur="0.2s"
+						begin="anim_open.end + 0.5s"
 						fill="freeze"
 						id="anim_close"
 					/>

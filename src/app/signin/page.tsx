@@ -1,9 +1,10 @@
 import { SignIn } from "@/components/forms/SignInForm";
+import { Container } from "@/components/layout/Container";
 
 export default function SignInPage() {
 	return (
-		<section className="h-screen flex justify-center mt-48">
+		<Container className="mt-32 max-w-xl">
 			<SignIn />
-		</section>
+		</Container>
 	);
 }
