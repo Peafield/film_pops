@@ -12,7 +12,7 @@ import { MdOutlineAdminPanelSettings, MdOutlineUpcoming } from "react-icons/md";
 import { PiRanking } from "react-icons/pi";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { useClickAway } from "react-use";
-import { FilmPopsLogo } from "./FilmPopsLogo";
+import { FilmPops } from "./FilmPops";
 
 export const Sidebar = () => {
 	const router = useRouter();
@@ -57,7 +57,7 @@ export const Sidebar = () => {
 							aria-label="Sidebar"
 						>
 							<div className="flex items-center justify-between p-5 border-b-2 border-zinc-800">
-								<FilmPopsLogo title={userData?.name} />
+								<FilmPops name={userData?.name} />
 								<button
 									type="button"
 									onClick={handleToggleSidebar}
@@ -117,7 +117,7 @@ const items = [
 	{
 		title: "Pops' Picks",
 		Icon: PiRanking,
-		href: "/popspicks",
+		href: "/pops-picks",
 		action: "toggle",
 	},
 	{

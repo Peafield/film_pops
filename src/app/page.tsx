@@ -11,7 +11,7 @@ export default function Home() {
 			<PageHeader
 				title="Upcoming Films"
 				icon={<MdOutlineUpcoming />}
-				subtitle="	Films out now and upcoming in the next 6 months."
+				subtitle="Films out now and upcoming in the next 6 months."
 			/>
 			<Suspense fallback={<LoadingSkeleton />}>
 				<MovieGrid />

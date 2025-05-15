@@ -47,12 +47,12 @@ export const SignInFormSchema = z.object({
 
 export const TMDBMovieSchema = z.object({
 	id: z.number(),
-	genre_ids: z.array(z.number()),
-	title: z.string(),
-	overview: z.string(),
-	popularity: z.number(),
-	poster_path: z.string(),
-	release_date: z.string(),
+	genre_ids: z.array(z.number()).optional(),
+	title: z.string().optional(),
+	overview: z.string().optional(),
+	popularity: z.number().optional(),
+	poster_path: z.string().optional(),
+	release_date: z.string().optional(),
 	userRank: z.enum(["yeah", "maybe", "nope"]).optional().nullable(),
 });
 
@@ -91,3 +91,26 @@ export const RankMovieActionSchema = z.object({
 export type UserRankingsMap = Record<number, RankChoice>;
 
 export type MovieGridFilter = "all" | "yeah" | "maybe" | "nope" | "toRank";
+
+export const PopsPickMovieSchema = TMDBMovieSchema.extend({
+	totalScore: z.number(),
+	yeahVotes: z.number(),
+	maybeVotes: z.number(),
+	nopeVotes: z.number(),
+	totalUserVotes: z.number(),
+});
+
+export type PopsPickMovie = z.infer<typeof PopsPickMovieSchema>;
+
+export type GetPopsPicksResult = {
+	success: boolean;
+	picks?: PopsPickMovie[];
+	message?: string;
+	error?: string;
+};
+
+export const SCORE_WEIGHTS: Record<RankChoice, number> = {
+	yeah: 2,
+	maybe: 1,
+	nope: -1,
+};
