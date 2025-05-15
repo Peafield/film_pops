@@ -9,7 +9,6 @@ import { PrimaryButton } from "../button/PrimaryButton";
 import { SettingsContainer } from "../settings/SettingsContainer";
 import { SettingsHeading } from "../settings/SettingsHeader";
 
-// TODO: REFACTOR NOT DRY! (SEE SIGNUP FORM)
 export function SignIn() {
 	const initialState = {
 		errors: {
