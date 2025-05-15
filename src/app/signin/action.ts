@@ -46,7 +46,7 @@ export async function submitSignInForm(
 	const { email, password, rememberMe } = validatedFields.data;
 
 	try {
-		await auth.api.signInEmail({
+		const response = await auth.api.signInEmail({
 			body: {
 				email,
 				password,
@@ -54,12 +54,37 @@ export async function submitSignInForm(
 			},
 			asResponse: true,
 		});
+		if (response.ok) {
+		} else {
+			let errorMessage = "Invalid email or password.";
+			try {
+				const errorData = await response.json();
+				if (errorData?.message) {
+					errorMessage = errorData.message;
+				} else if (response.status === 401 || response.status === 400) {
+					errorMessage = "Invalid email or password.";
+				}
+				console.error("Authentication failed:", response.status, errorData);
+			} catch (jsonError) {
+				console.error("Error parsing auth error response:", jsonError);
+				if (response.status === 401 || response.status === 400) {
+					errorMessage = "Invalid email or password.";
+				} else {
+					errorMessage = `Login failed with status: ${response.status}`;
+				}
+			}
+			return {
+				values: formValues,
+				message: errorMessage,
+				errors: { credentials: [errorMessage] },
+			};
+		}
 	} catch (error) {
-		console.error("Sign in error:", error);
+		console.error("Unexpected sign in error:", error);
 		return {
 			values: formValues,
-			message: "Something went wrong during login.",
-			errors: { credentials: ["An unexpected error occurred."] },
+			message: "Something went wrong during login. Please try again.",
+			errors: { credentials: ["An unexpected server error occurred."] },
 		};
 	}
 	redirect("/");

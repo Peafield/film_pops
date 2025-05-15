@@ -2,9 +2,11 @@
 
 import { submitSignInForm } from "@/app/signin/action";
 import DOMPurify from "isomorphic-dompurify";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
-import { FaCircleUser, FaRightToBracket } from "react-icons/fa6";
+import { FaCircleUser } from "react-icons/fa6";
+import { CustomToast } from "../CustomToast";
 import { PrimaryButton } from "../button/PrimaryButton";
 import { SettingsContainer } from "../settings/SettingsContainer";
 import { SettingsHeading } from "../settings/SettingsHeader";
@@ -27,11 +29,29 @@ export function SignIn() {
 		submitSignInForm,
 		initialState,
 	);
+
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
 	const togglePasswordVisibility = () => {
 		setIsPasswordVisible((prev) => !prev);
 	};
+
+	useEffect(() => {
+		if (state?.message) {
+			toast.custom(
+				<CustomToast
+					variant={
+						state.errors?.credentials ||
+						state.errors?.email ||
+						state.errors?.password
+							? "error"
+							: "info"
+					}
+					message={state.message}
+				/>,
+			);
+		}
+	}, [state]);
 
 	return (
 		<SettingsContainer>
@@ -64,6 +84,9 @@ export function SignIn() {
 							</span>
 						</div>
 					</div>
+					{state.errors?.email && (
+						<p className="text-red-400">{state.errors.email}</p>
+					)}
 					<div className="flex-1">
 						<label htmlFor="password" className="block text-gray-300 mb-2">
 							Password
@@ -89,6 +112,9 @@ export function SignIn() {
 							</button>
 						</div>
 					</div>
+					{state.errors?.password && (
+						<p className="text-red-400">{state.errors.password}</p>
+					)}
 					<div className="flex-1 flex items-center justify-end gap-1">
 						<input
 							type="checkbox"
