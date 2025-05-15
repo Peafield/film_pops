@@ -9,7 +9,7 @@ FROM oven/bun:1 AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/bun.lockb ./bun.lock
+COPY --from=deps /app/bun.lock ./bun.lock
 COPY --from=deps /app/package.json ./package.json
 
 COPY . .
