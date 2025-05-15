@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: film-pops-app
+    ports:
+      - "3011:3011"
+    environment:
+      NODE_ENV: production
+      PORT: 3011
+      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_DB_NAME: ${MONGODB_DB_NAME}
+      TMDB_API_KEY: ${TMDB_API_KEY}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      INITIAL_ADMIN_EMAIL: ${INITIAL_ADMIN_EMAIL}
+      INITIAL_ADMIN_NAME: ${INITIAL_ADMIN_NAME}
+      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD}
+    restart: unless-stopped
+    networks:
+      - film-pops-network
+networks:
+  film-pops-network:
+    driver: bridge
