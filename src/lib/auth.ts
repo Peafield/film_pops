@@ -37,6 +37,7 @@ async function initializeAuth() {
 					maxAge: 5 * 60,
 				},
 			},
+			trustedOrigins: ["http://192.168.0.62:3000"],
 		});
 	} catch (error) {
 		console.error(

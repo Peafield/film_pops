@@ -4,8 +4,6 @@ import { useGetPopsPicks } from "@/hooks/popsPicks/useGetPopsPicks";
 import type { PopsPickMovie } from "@/types";
 import { useMemo } from "react";
 import { FaQuestion, FaThumbsDown, FaThumbsUp } from "react-icons/fa";
-import { LoadingSkeleton } from "../movie/LoadingSkeleton";
-import { PopsPicksMovieCard } from "./PopsPicksMovieCard";
 import { PopsPicksMovieCardSkeleton } from "./PopsPicksMovieCardSkeleton";
 import { PopsPicksRankSection } from "./PopsPicksRankSection";
 
@@ -126,10 +124,6 @@ export function PopsPicks() {
 	if (loading) {
 		return (
 			<div className="container mx-auto p-4">
-				<h1 className="text-3xl font-bold text-white mb-8 text-center">
-					Pops' Picks
-				</h1>
-				{/* Render a grid of skeletons */}
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 					{Array.from({ length: 12 }).map((_, index) => (
 						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>

@@ -1,16 +1,43 @@
+import { cn } from "@/utils/cn";
+
 type VoteItemProps = {
 	icon: React.ReactNode;
-	color: string;
+	color: "yeah" | "maybe" | "nope";
 	percentage: number;
 };
 
 export function VoteItem({ icon, color, percentage }: VoteItemProps) {
 	return (
-		<div className={`flex items-center ${color} space-x-1.5`}>
+		<div
+			className={cn(
+				"flex items-center ${color} space-x-1.5",
+				{
+					"text-green-400": color === "yeah",
+				},
+				{
+					"text-yellow-400": color === "maybe",
+				},
+				{
+					"text-red-400": color === "nope",
+				},
+			)}
+		>
 			{icon}
 			<div className="flex-grow bg-gray-600 rounded-full h-1.5 overflow-hidden ml-1">
 				<div
-					className={`${color.replace("text-", "bg-")} h-1.5 rounded-full`}
+					className={cn(
+						"h-1.5 rounded-full",
+						{
+							"text-green-400 bg-green-400": color === "yeah",
+						},
+						{
+							"text-yellow-400 bg-yellow-400": color === "maybe",
+						},
+						{
+							"text-red-400 bg-red-400": color === "nope",
+						},
+					)}
+					// className={`${color.replace("text-", "bg-")} h-1.5 rounded-full`}
 					style={{ width: `${percentage}%` }}
 				/>
 			</div>

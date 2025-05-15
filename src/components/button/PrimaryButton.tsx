@@ -2,7 +2,7 @@ import { cn } from "@/utils/cn";
 import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 
-type AdminUserManagementButtonProps = {
+type PrimaryButtonProps = {
 	title: string;
 	type: "submit" | "button";
 	icon?: React.ReactNode;
@@ -12,7 +12,7 @@ type AdminUserManagementButtonProps = {
 	isDangerModal?: boolean;
 };
 
-export function AdminUserManagementButton({
+export function PrimaryButton({
 	title,
 	icon,
 	onClick,
@@ -20,7 +20,7 @@ export function AdminUserManagementButton({
 	type,
 	form,
 	isDangerModal = false,
-}: AdminUserManagementButtonProps) {
+}: PrimaryButtonProps) {
 	const [isMounted, setIsMounted] = useState(false);
 
 	useEffect(() => {
@@ -35,7 +35,7 @@ export function AdminUserManagementButton({
 		<button
 			form={form}
 			type={type}
-			onClick={onClick}
+			onClick={handleClick}
 			className={cn(
 				"bg-indigo-500 hover:bg-indigo-900 text-white px-4 py-2 rounded-lg flex items-center cursor-pointer",
 				{

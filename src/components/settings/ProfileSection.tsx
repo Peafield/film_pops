@@ -6,7 +6,9 @@ import { cn } from "@/utils/cn";
 import { type FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaPen, FaUserEdit } from "react-icons/fa";
+import { FaArrowsRotate } from "react-icons/fa6";
 import { CustomToast } from "../CustomToast";
+import { PrimaryButton } from "../button/PrimaryButton";
 import { SettingsContainer } from "./SettingsContainer";
 import { SettingsHeading } from "./SettingsHeader";
 
@@ -94,6 +96,7 @@ export function ProfileSection() {
 					/>,
 				);
 			}
+			handleEditProfileToggle();
 		} catch (e) {
 			console.error("Profile Section Api Error:", e);
 			toast.custom(
@@ -107,20 +110,14 @@ export function ProfileSection() {
 		<SettingsContainer>
 			<div className="flex items-center justify-between">
 				<SettingsHeading icon={<FaUserEdit />} title="Profile Information" />
-				<button
-					type="button"
-					aria-label="Edit profile button"
-					className={cn(
-						"bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition flex items-center",
-						{
-							collapse: isEditProfileClicked,
-						},
-					)}
-					onClick={handleEditProfileToggle}
-				>
-					<FaPen className="mr-2" />
-					Edit Profile
-				</button>
+				{!isEditProfileClicked && (
+					<PrimaryButton
+						title="Edit Profile"
+						icon={<FaPen />}
+						type="button"
+						onClick={handleEditProfileToggle}
+					/>
+				)}
 			</div>
 			<form id="profileForm" onSubmit={handleSubmit} className="space-y-6">
 				<div className="flex flex-col md:flex-row gap-6">
@@ -175,12 +172,12 @@ export function ProfileSection() {
 						>
 							Cancel
 						</button>
-						<button
+						<PrimaryButton
 							type="submit"
-							className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition"
-						>
-							{isPending ? "Saving..." : "Save Changes"}
-						</button>
+							title={isPending ? "Saving..." : "Save Changes"}
+							form="profileForm"
+							icon={<FaArrowsRotate />}
+						/>
 					</div>
 				</div>
 			</form>
