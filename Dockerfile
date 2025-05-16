@@ -34,9 +34,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-COPY --from=builder --chown=nextjs:nodejs /app/scripts ./scripts
-
-COPY --from=builder /usr/local/bin/bun /usr/local/bin/bun
+COPY --from=builder --chown=nextjs:nodejs /app/dist/scripts ./dist/scripts
 
 USER nextjs
 
