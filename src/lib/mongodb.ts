@@ -14,12 +14,6 @@ const options = {
 	socketTimeoutMS: 30000,
 };
 
-if (!uri) {
-	throw new Error(
-		"Please define the MONGODB_URI environment variable inside .env.local",
-	);
-}
-
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
 
