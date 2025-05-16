@@ -1,7 +1,7 @@
 import { type Db, MongoClient, ServerApiVersion } from "mongodb";
 
-const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
-const dbName = process.env.MONGODB_DB_NAME || "filmPops";
+const uri = process.env.MONGODB_URI;
+const dbNameFromEnv = process.env.MONGODB_DB_NAME;
 const options = {
 	serverApi: {
 		version: ServerApiVersion.v1,
@@ -22,6 +22,7 @@ let cachedDb: Db | null = null;
  * caches the client and db instances, and returns them.
  */
 async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+	const effectiveDbName = dbNameFromEnv || "filmPops";
 	if (process.env.NODE_ENV === "production" && !uri) {
 		console.warn(
 			"MONGODB_URI not set in production environment. Assuming build phase and returning mock DB object.",
@@ -31,7 +32,7 @@ async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
 			client: null,
 			// @ts-ignore - This is a deliberate mock for build time
 			db: {
-				databaseName: dbName,
+				databaseName: effectiveDbName,
 				collection: (name: string) => ({
 					collectionName: name,
 				}),
@@ -57,7 +58,7 @@ async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
 
 	if (cachedClient && cachedDb) {
 		try {
-			await cachedClient.db(dbName).command({ ping: 1 });
+			await cachedClient.db(effectiveDbName).command({ ping: 1 });
 		} catch (e) {
 			console.warn("Cached connection ping failed, reconnecting...", e);
 			cachedClient = null;
@@ -74,10 +75,12 @@ async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
 	try {
 		console.log("Attempting to connect to MongoDB...");
 		await client.connect();
-		const db = client.db(dbName);
+		const db = client.db(effectiveDbName);
 
 		await db.command({ ping: 1 });
-		console.log(`Successfully connected to MongoDB database: ${dbName}`);
+		console.log(
+			`Successfully connected to MongoDB database: ${effectiveDbName}`,
+		);
 
 		cachedDb = db;
 
