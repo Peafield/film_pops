@@ -14,12 +14,11 @@ COPY --from=deps /app/package.json ./package.json
 
 COPY . .
 
+ARG NODE_ENV
+ENV NODE_ENV=production
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-ARG MONGODB_URI
-ENV MONGODB_URI=${MONGODB_URI}
 
-ENV NODE_ENV=production
 RUN bun run build
 
 FROM node:24-alpine AS runner

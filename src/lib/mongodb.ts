@@ -28,6 +28,39 @@ let cachedDb: Db | null = null;
  * caches the client and db instances, and returns them.
  */
 async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+	if (process.env.NODE_ENV === "production" && !uri) {
+		console.warn(
+			"MONGODB_URI not set in production environment. Assuming build phase and returning mock DB object.",
+		);
+		return {
+			// @ts-ignore - This is a deliberate mock for build time
+			client: null,
+			// @ts-ignore - This is a deliberate mock for build time
+			db: {
+				databaseName: dbName,
+				collection: (name: string) => ({
+					collectionName: name,
+				}),
+				command: async (command: object) => {
+					if (command && typeof command === "object" && "ping" in command) {
+						return { ok: 1 };
+					}
+					console.warn(
+						`Mock DB received unhandled command: ${JSON.stringify(command)}`,
+					);
+					return {};
+				},
+			} as unknown as Db,
+		};
+	}
+
+	if (!uri) {
+		console.error(
+			"MONGODB_URI is not defined. Cannot connect to database at runtime.",
+		);
+		throw new Error("MONGODB_URI environment variable is not set.");
+	}
+
 	if (cachedClient && cachedDb) {
 		try {
 			await cachedClient.db(dbName).command({ ping: 1 });
