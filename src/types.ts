@@ -92,11 +92,26 @@ export type UserRankingsMap = Record<number, RankChoice>;
 
 export type MovieGridFilter = "all" | "yeah" | "maybe" | "nope" | "toRank";
 
+export const VoterInfoSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+});
+
+export type VoterInfo = z.infer<typeof VoterInfoSchema>;
+
+export interface UserDbRecord {
+	_id: import("mongodb").ObjectId;
+	name?: string;
+}
+
 export const PopsPickMovieSchema = TMDBMovieSchema.extend({
 	totalScore: z.number(),
 	yeahVotes: z.number(),
 	maybeVotes: z.number(),
 	nopeVotes: z.number(),
+	yeahVoters: z.array(VoterInfoSchema),
+	maybeVoters: z.array(VoterInfoSchema),
+	nopeVoters: z.array(VoterInfoSchema),
 	totalUserVotes: z.number(),
 });
 

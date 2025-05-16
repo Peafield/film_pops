@@ -10,7 +10,7 @@ export function VoteItem({ icon, color, percentage }: VoteItemProps) {
 	return (
 		<div
 			className={cn(
-				"flex items-center ${color} space-x-1.5",
+				"flex items-center space-x-1.5",
 				{
 					"text-green-400": color === "yeah",
 				},
@@ -37,7 +37,6 @@ export function VoteItem({ icon, color, percentage }: VoteItemProps) {
 							"text-red-400 bg-red-400": color === "nope",
 						},
 					)}
-					// className={`${color.replace("text-", "bg-")} h-1.5 rounded-full`}
 					style={{ width: `${percentage}%` }}
 				/>
 			</div>
