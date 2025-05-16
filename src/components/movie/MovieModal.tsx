@@ -9,7 +9,6 @@ import {
 	FaQuestion,
 	FaThumbsDown,
 	FaThumbsUp,
-	FaTimes,
 	FaTimesCircle,
 } from "react-icons/fa";
 import { FaCircleInfo } from "react-icons/fa6";
@@ -149,7 +148,7 @@ export function MovieModal({
 								rel="noopener noreferrer"
 							>
 								<FaCircleInfo className="mr-2" />
-								More info
+								More info and trailers
 							</Link>
 						</div>
 					</div>

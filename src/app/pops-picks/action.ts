@@ -7,13 +7,17 @@ import {
 	type PopsPickMovie,
 	SCORE_WEIGHTS,
 	type TMDBMovie,
+	type UserDbRecord,
+	type VoterInfo,
 } from "@/types";
+import { ObjectId } from "mongodb";
 
 export async function getPopsPicksAction(): Promise<GetPopsPicksResult> {
 	try {
 		const db = await getDb();
 		const rankingsCollection = db.collection<MovieRanking>("movieRankings");
 		const moviesCollection = db.collection<TMDBMovie>("movies");
+		const userCollection = db.collection("user");
 
 		const aggregatedRankings = await rankingsCollection
 			.aggregate([
@@ -29,7 +33,21 @@ export async function getPopsPicksAction(): Promise<GetPopsPicksResult> {
 						nopeVotes: {
 							$sum: { $cond: [{ $eq: ["$rank", "nope"] }, 1, 0] },
 						},
-						voters: { $addToSet: "$userId" },
+						yeahVoterIds: {
+							$addToSet: {
+								$cond: [{ $eq: ["$rank", "yeah"] }, "$userId", "$$REMOVE"],
+							},
+						},
+						maybeVoterIds: {
+							$addToSet: {
+								$cond: [{ $eq: ["$rank", "maybe"] }, "$userId", "$$REMOVE"],
+							},
+						},
+						nopeVoterIds: {
+							$addToSet: {
+								$cond: [{ $eq: ["$rank", "nope"] }, "$userId", "$$REMOVE"],
+							},
+						},
 					},
 				},
 				{
@@ -50,9 +68,12 @@ export async function getPopsPicksAction(): Promise<GetPopsPicksResult> {
 					$project: {
 						movieId: "$_id",
 						totalScore: 1,
-						yeahVotes: 1,
-						maybeVotes: 1,
-						nopeVotes: 1,
+						yeahVotes: "$yeahVotes",
+						maybeVotes: "$maybeVotes",
+						nopeVotes: "$nopeVotes",
+						yeahVoterIds: 1,
+						maybeVoterIds: 1,
+						nopeVoterIds: 1,
 						totalUserVotes: 1,
 						_id: 0,
 					},
@@ -68,8 +89,54 @@ export async function getPopsPicksAction(): Promise<GetPopsPicksResult> {
 			};
 		}
 
-		const movieIds = aggregatedRankings.map((r) => r.movieId);
+		const allUserIdsSet = new Set<string>();
+		for (const agg of aggregatedRankings) {
+			for (const id of (agg.yeahVoterIds as string[]) || []) {
+				allUserIdsSet.add(id);
+			}
+			for (const id of (agg.maybeVoterIds as string[]) || []) {
+				allUserIdsSet.add(id);
+			}
+			for (const id of (agg.nopeVoterIds as string[]) || []) {
+				allUserIdsSet.add(id);
+			}
+		}
 
+		const allUserIdsArray = Array.from(allUserIdsSet);
+
+		const allUserObjectIds = allUserIdsArray
+			.map((idStr) => {
+				try {
+					return new ObjectId(idStr);
+				} catch (e) {
+					console.warn(`[GPPA] Invalid ObjectId string: ${idStr}`);
+					return null;
+				}
+			})
+			.filter((id) => id !== null) as ObjectId[];
+
+		const userDetailsCursor = userCollection.find(
+			{ _id: { $in: allUserObjectIds } },
+			{ projection: { name: 1, _id: 1 } },
+		);
+
+		const userDetailsArrayFromDb: UserDbRecord[] =
+			(await userDetailsCursor.toArray()) as UserDbRecord[];
+
+		const userMap = new Map<string, string>();
+		userDetailsArrayFromDb.forEach((u, index) => {
+			if (u?._id && typeof u.name === "string" && u.name.trim() !== "") {
+				const userIdStr = u._id.toString();
+				userMap.set(userIdStr, u.name);
+			} else {
+				console.warn(
+					"[GPPA Debug] Skipping user document due to missing _id or name, or empty name string:",
+					JSON.stringify(u),
+				);
+			}
+		});
+
+		const movieIds = aggregatedRankings.map((r) => r.movieId);
 		const movieDetailsArray = await moviesCollection
 			.find({ id: { $in: movieIds } })
 			.toArray();
@@ -82,6 +149,11 @@ export async function getPopsPicksAction(): Promise<GetPopsPicksResult> {
 		const popsPicks: PopsPickMovie[] = aggregatedRankings
 			.map((ranking) => {
 				const movieDetail = movieDetailsMap.get(ranking.movieId);
+				const mapIdsToVoters = (ids: string[]): VoterInfo[] =>
+					(ids || [])
+						.map((id) => ({ id, name: userMap.get(id) || "Unknown User" }))
+						.filter((v) => v.name !== "Unknown User");
+
 				return {
 					...(movieDetail || ({} as TMDBMovie)),
 					id: ranking.movieId,
@@ -90,9 +162,12 @@ export async function getPopsPicksAction(): Promise<GetPopsPicksResult> {
 					yeahVotes: ranking.yeahVotes,
 					maybeVotes: ranking.maybeVotes,
 					nopeVotes: ranking.nopeVotes,
+					yeahVoters: mapIdsToVoters(ranking.yeahVoterIds as string[]),
+					maybeVoters: mapIdsToVoters(ranking.maybeVoterIds as string[]),
+					nopeVoters: mapIdsToVoters(ranking.nopeVoterIds as string[]),
 					totalUserVotes: ranking.totalUserVotes,
 					overview: movieDetail?.overview || "",
-					poster_path: movieDetail?.poster_path,
+					poster_path: movieDetail?.poster_path || undefined,
 					release_date: movieDetail?.release_date || "",
 					genre_ids: movieDetail?.genre_ids || [],
 					popularity: movieDetail?.popularity || 0,
@@ -133,6 +208,7 @@ export async function getPopsPicksAction(): Promise<GetPopsPicksResult> {
 			// Final tie-breaker: movie title (alphabetical)
 			return (a.title || "").localeCompare(b.title || "");
 		});
+
 		return { success: true, picks: popsPicks };
 	} catch (error) {
 		console.error("Error in getPopsPicksAction:", error);
