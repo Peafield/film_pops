@@ -37,7 +37,10 @@ async function initializeAuth() {
 					maxAge: 5 * 60,
 				},
 			},
-			trustedOrigins: ["http://192.168.0.62:3000"],
+			trustedOrigins:
+				process.env.NODE_ENV === "production"
+					? [process.env.APP_URL || "http://localhost:3000"]
+					: ["http://192.168.0.62:3000", "http://localhost:3000"],
 		});
 	} catch (error) {
 		console.error(
