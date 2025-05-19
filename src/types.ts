@@ -55,6 +55,7 @@ export const TMDBMovieSchema = z.object({
 	release_date: z.string().optional(),
 	userRank: z.enum(["yeah", "maybe", "nope"]).optional().nullable(),
 	isArchived: z.boolean().default(false),
+	seen: z.boolean().default(false),
 });
 
 export type TMDBMovie = z.infer<typeof TMDBMovieSchema>;
@@ -130,3 +131,7 @@ export const SCORE_WEIGHTS: Record<RankChoice, number> = {
 	maybe: 1,
 	nope: -1,
 };
+
+export interface ApiRouteResponse {
+	popsPicks: GetPopsPicksResult;
+}

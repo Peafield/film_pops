@@ -42,6 +42,6 @@ body {
   @apply bg-indigo-600;
 }
 
-.react-tabs__tab-panel:hover:not(.react-tabs__tab-panel--selected) {
-  @apply;
+.react-tabs__tab-panel--selected {
+  @apply w-full;
 }
