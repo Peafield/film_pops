@@ -20,6 +20,7 @@ export type ArchiveMoviesActionResult = {
 };
 
 export async function archiveOldMoviesAction(): Promise<ArchiveMoviesActionResult> {
+	// TODO: Refactor authentifcation into middleware or helper function
 	const readonlyRequestHeaders = headers();
 	const requestHeaders = new Headers(await readonlyRequestHeaders);
 	const session = await auth.api.getSession({ headers: requestHeaders });
@@ -195,6 +196,98 @@ export async function getArchivedMoviesAction(): Promise<GetArchivedMoviesResult
 		return {
 			success: false,
 			message: "Failed to fetch archived movies.",
+			error: error instanceof Error ? error.message : "Unknown server error.",
+		};
+	}
+}
+
+type MarkMovieAsSeenProps = {
+	movieId: number;
+};
+
+export type MarkMovieAsSeenResult = {
+	success: boolean;
+	message: string;
+	error?: string;
+};
+
+export async function markMovieAsSeen({
+	movieId,
+}: MarkMovieAsSeenProps): Promise<MarkMovieAsSeenResult> {
+	const readonlyRequestHeaders = headers();
+	const requestHeaders = new Headers(await readonlyRequestHeaders);
+	const session = await auth.api.getSession({ headers: requestHeaders });
+
+	if (!session?.user?.id) {
+		return {
+			success: false,
+			message: "Not authenticated.",
+			error: "User not logged in or session invalid.",
+		};
+	}
+
+	let userRole: string | undefined | null = null;
+	try {
+		const db = await getDb();
+		const userCollection = db.collection<{ role?: string }>("user");
+		const userDoc = await userCollection.findOne({
+			_id: new ObjectId(session.user.id),
+		});
+
+		if (userDoc) {
+			userRole = userDoc.role;
+		} else {
+			return {
+				success: false,
+				message: "Authorization check failed.",
+				error: "User not found.",
+			};
+		}
+	} catch (dbError) {
+		return {
+			success: false,
+			message: "Authorization check failed.",
+			error: "Could not verify user role.",
+		};
+	}
+
+	if (userRole !== "admin") {
+		return {
+			success: false,
+			message: "Not authorized.",
+			error: "User lacks admin privileges.",
+		};
+	}
+
+	try {
+		const db = await getDb();
+		const moviesCollection = db.collection<TMDBMovie>("movies");
+
+		const updateResult = await moviesCollection.updateOne(
+			{
+				id: movieId,
+			},
+			{
+				$set: {
+					seen: true,
+				},
+			},
+		);
+
+		const archivedCount = updateResult.modifiedCount;
+
+		return {
+			success: true,
+			message: "Successfully marked movie as seen.",
+		};
+	} catch (error) {
+		console.error(
+			"[Post Mark as Seen Action] Error marking movie as seen:",
+			error,
+		);
+		return {
+			success: false,
+			message: "Failed to mark movie as seen.",
 			error: error instanceof Error ? error.message : "Unknown server error.",
 		};
 	}

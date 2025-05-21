@@ -57,7 +57,10 @@ export function AdminFilmPanel() {
 			</div>
 			{loading && <div>Loading archived films...</div>}
 			{!loading && !error && archivedMovieData && (
-				<AdminFilmTable archivedMovies={archivedMovieData.movies} />
+				<AdminFilmTable
+					archivedMovies={archivedMovieData.movies}
+					refetchArchivedMovies={refetchArchivedMovies}
+				/>
 			)}
 		</AdminDashboardPanel>
 	);

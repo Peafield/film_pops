@@ -1,10 +1,57 @@
-import type { GetPopsPicksResult, PopsPickMovie, TMDBMovie } from "@/types";
+import { useMarkMovieAsSeen } from "@/hooks/admin/useAdminMarkMovieAsSeen";
+import { useGetArchivedMovies } from "@/hooks/admin/useGetArchivedMovies";
+import type { TMDBMovie } from "@/types";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { FaEye } from "react-icons/fa";
+import { CustomToast } from "../CustomToast";
 
 type AdminFilmActionsProps = {
 	archivedMovies?: TMDBMovie[];
+	refetchArchivedMovies: () => Promise<void>;
 };
 
-export function AdminFilmTable({ archivedMovies }: AdminFilmActionsProps) {
+export function AdminFilmTable({
+	archivedMovies,
+	refetchArchivedMovies,
+}: AdminFilmActionsProps) {
+	const {
+		triggerMarkMovieAsSeen,
+		isMarkingAsSeen,
+		markMovieAsSeenResult,
+		markingAsSeenError,
+	} = useMarkMovieAsSeen();
+
+	useEffect(() => {
+		if (markMovieAsSeenResult) {
+			if (!markMovieAsSeenResult.success) {
+				toast.custom(
+					<CustomToast
+						variant="error"
+						message={
+							markMovieAsSeenResult.message ||
+							markingAsSeenError ||
+							"Oops, something went wrong marking the movie as seeen."
+						}
+					/>,
+				);
+			} else {
+				toast.custom(
+					<CustomToast
+						variant="success"
+						message={
+							markMovieAsSeenResult.message ||
+							"Successfully marked movie as seen."
+						}
+					/>,
+				);
+				if (refetchArchivedMovies) {
+					refetchArchivedMovies();
+				}
+			}
+		}
+	}, [markMovieAsSeenResult, markingAsSeenError, refetchArchivedMovies]);
+
 	return (
 		<div className="rounded-lg shadow">
 			<div className="overflow-x-auto">
@@ -19,15 +66,21 @@ export function AdminFilmTable({ archivedMovies }: AdminFilmActionsProps) {
 							</th>
 							<th
 								scope="col"
-								className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider"
+								className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
 							>
 								Release Date
 							</th>
 							<th
 								scope="col"
-								className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider"
+								className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
 							>
 								Seen?
+							</th>
+							<th
+								scope="col"
+								className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider"
+							>
+								Actions
 							</th>
 						</tr>
 					</thead>
@@ -47,8 +100,20 @@ export function AdminFilmTable({ archivedMovies }: AdminFilmActionsProps) {
 									</td>
 									<td className="px-6 py-4 whitespace-nowrap">
 										<p className="text-sm text-gray-300">
-											{archivedMovie.seen}
+											{archivedMovie.seen ? "Yes" : "No"}
 										</p>
+									</td>
+									<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+										<button
+											type="button"
+											onClick={() =>
+												triggerMarkMovieAsSeen({ movieId: archivedMovie.id })
+											}
+											className="text-indigo-400 hover:text-indigo-600 cursor-pointer"
+											disabled={archivedMovie.seen}
+										>
+											<FaEye />
+										</button>
 									</td>
 								</tr>
 							);
