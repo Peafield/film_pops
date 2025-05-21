@@ -3,7 +3,7 @@ import type { UserWithRole } from "better-auth/plugins";
 import { useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 import toast from "react-hot-toast";
-import { FaEdit, FaTrash, FaUserMinus } from "react-icons/fa";
+import { FaTrash, FaUserMinus } from "react-icons/fa";
 import { CustomToast } from "../CustomToast";
 import { Modal } from "../Modal";
 import { DeleteUser } from "./DeleteUser";

@@ -41,3 +41,7 @@ body {
 .react-tabs__tab--selected {
   @apply bg-indigo-600;
 }
+
+.react-tabs__tab-panel--selected {
+  @apply w-full;
+}

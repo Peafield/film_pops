@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { getDb } from "@/lib/mongodb";
-import type { MovieRanking, RankChoice, UserRankingsMap } from "@/types";
+import type { MovieRanking, UserRankingsMap } from "@/types";
 import { headers } from "next/headers";
 
 export async function getUserRankingsAction(): Promise<UserRankingsMap | null> {

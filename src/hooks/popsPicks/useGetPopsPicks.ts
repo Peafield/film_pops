@@ -1,9 +1,5 @@
-import type { GetPopsPicksResult, PopsPickMovie } from "@/types";
+import type { ApiRouteResponse, GetPopsPicksResult } from "@/types";
 import { useCallback, useEffect, useState } from "react";
-
-interface ApiRouteResponse {
-	popsPicks: GetPopsPicksResult;
-}
 
 export function useGetPopsPicks() {
 	const [popsPicksData, setPopsPicksData] = useState<GetPopsPicksResult | null>(
