@@ -138,7 +138,10 @@ export async function getPopsPicksAction(): Promise<GetPopsPicksResult> {
 
 		const movieIds = aggregatedRankings.map((r) => r.movieId);
 		const movieDetailsArray = await moviesCollection
-			.find({ id: { $in: movieIds } })
+			.find({
+				id: { $in: movieIds },
+				$or: [{ isArchived: { $exists: false } }, { isArchived: false }],
+			})
 			.toArray();
 
 		const movieDetailsMap = new Map<number, TMDBMovie>();
