@@ -2,6 +2,7 @@
 
 import type { RankChoice, TMDBMovie } from "@/types";
 import { cn } from "@/utils/cn";
+import { h1 } from "motion/react-client";
 import { FaQuestion, FaThumbsDown, FaThumbsUp } from "react-icons/fa";
 
 type MovieCardProps = {
@@ -52,14 +53,28 @@ export function MovieCard({ movie, onCardClick }: MovieCardProps) {
 			aria-label="Movie card"
 		>
 			<div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform hover:scale-105">
-				<img
-					src={imageUrl}
-					alt={`Poster for ${movie.title}`}
-					className={cn("w-full h-auto aspect-[2/3] object-cover", {
-						"grayscale-100": movie.userRank === "nope",
-					})}
-					loading="lazy"
-				/>
+				{movie.poster_path ? (
+					<img
+						src={imageUrl}
+						alt={`Poster for ${movie.title}`}
+						className={cn("w-full h-auto aspect-[2/3] object-cover", {
+							"grayscale-100": movie.userRank === "nope",
+						})}
+						loading="lazy"
+					/>
+				) : (
+					<div
+						className={cn(
+							"w-full h-auto aspect-[2/3] object-cover flex items-center justify-center",
+							{
+								"grayscale-100": movie.userRank === "nope",
+							},
+						)}
+					>
+						<h1>{movie.title}</h1>
+					</div>
+				)}
+
 				{movie.userRank && <RankIndicatorIcon rank={movie.userRank} />}
 			</div>
 		</div>

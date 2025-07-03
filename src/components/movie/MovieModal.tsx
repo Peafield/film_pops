@@ -95,14 +95,16 @@ export function MovieModal({
 
 				<div className="overflow-y-auto flex-grow">
 					<div className="flex flex-col md:flex-row">
+						{movie.poster_path && (
+							<div className="w-full md:w-1/3 flex-shrink-0">
+								<img
+									src={posterURL}
+									alt={`Post for ${movie.title}`}
+									className="w-full h-full object-cover"
+								/>
+							</div>
+						)}
 						{/* Movie Poster */}
-						<div className="w-full md:w-1/3 flex-shrink-0">
-							<img
-								src={posterURL}
-								alt={`Post for ${movie.title}`}
-								className="w-full h-full object-cover"
-							/>
-						</div>
 
 						{/* Movie Details */}
 						<div className="p-4 md:p-6 space-y-4 md:w-2/3">

@@ -104,14 +104,17 @@ export function PopsPicksMovieCard({ movie }: PopsPicksMovieCardProps) {
 				</div>
 			)}
 			<div className="flex flex-grow">
-				<div className="w-28 md:w-24 flex-shrink-0">
-					<img
-						src={posterUrl}
-						alt={`Poster for ${movie.title}`}
-						className="w-full h-full object-cover rounded-l-lg"
-						loading="lazy"
-					/>
-				</div>
+				{movie.poster_path && (
+					<div className="w-28 md:w-24 flex-shrink-0">
+						<img
+							src={posterUrl}
+							alt={`Poster for ${movie.title}`}
+							className="w-full h-full object-cover rounded-l-lg"
+							loading="lazy"
+						/>
+					</div>
+				)}
+
 				<div className="p-3 sm:p-4 flex flex-col flex-grow justify-between">
 					<div>
 						<h3 className="font-bold text-md sm:text-lg text-white mb-1 line-clamp-2 leading-tight">

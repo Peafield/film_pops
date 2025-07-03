@@ -14,15 +14,18 @@ export async function fetchSingleMoviePage(
 	const params = new URLSearchParams({
 		include_adult: "false",
 		include_video: "false",
-		language: "en-GB",
+		language: "en-US",
+		certification_country: "GB",
 		with_original_language: "en",
 		page: page,
 		region: "GB",
 		sort_by: "popularity.desc",
 		"primary_release_date.gte": startDate,
 		"primary_release_date.lte": endDate,
+		"release_date.gte": startDate,
+		"release_date.lte": endDate,
 		with_release_type: "3",
-		without_genres: "99",
+		without_genres: "99, 10751",
 	});
 
 	const fullUrl = `${BASE_URL}?${params}`;
@@ -43,10 +46,21 @@ export async function fetchSingleMoviePage(
 				`TMDb API Error: ${res.status} ${res.statusText}`,
 				errorData,
 			);
+
 			return null;
 		}
 		const data: TMDBMovieReponse = await res.json();
-		return data.results || [];
+		const movies = data.results || [];
+
+		const filteredMovies = movies.filter(
+			(movie) =>
+				movie.genre_ids &&
+				movie.genre_ids.length > 0 &&
+				movie.popularity &&
+				movie.popularity > 1,
+		);
+
+		return filteredMovies;
 	} catch (err) {
 		const errorMessage = err instanceof Error ? err.message : String(err);
 		console.error("Error fetching single page movies:", errorMessage);
@@ -62,7 +76,7 @@ export async function getAllUpComingUKMovies() {
 
 	const today = new Date();
 	const twoWeeksAgoStartDate = new Date(today);
-	twoWeeksAgoStartDate.setDate(today.getDate() - 14);
+	twoWeeksAgoStartDate.setDate(today.getDate() - 7);
 	const sixMonthsFromNow = new Date(today);
 	sixMonthsFromNow.setMonth(today.getMonth() + 6);
 
@@ -97,6 +111,8 @@ export async function getAllUpComingUKMovies() {
 		if ((a.release_date || "") > (b.release_date || "")) return 1;
 		return 0;
 	});
+
+	console.log(uniqueMovies);
 
 	return uniqueMovies;
 }

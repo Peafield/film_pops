@@ -51,7 +51,7 @@ export const TMDBMovieSchema = z.object({
 	title: z.string().optional(),
 	overview: z.string().optional(),
 	popularity: z.number().optional(),
-	poster_path: z.string().optional(),
+	poster_path: z.string().optional().nullable(),
 	release_date: z.string().optional(),
 	userRank: z.enum(["yeah", "maybe", "nope"]).optional().nullable(),
 	isArchived: z.boolean().default(false),
