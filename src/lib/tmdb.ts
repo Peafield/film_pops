@@ -112,7 +112,5 @@ export async function getAllUpComingUKMovies() {
 		return 0;
 	});
 
-	console.log(uniqueMovies);
-
 	return uniqueMovies;
 }
